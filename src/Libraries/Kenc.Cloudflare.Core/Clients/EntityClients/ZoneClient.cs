@@ -54,7 +54,7 @@
             }
 
             var payload = new CreateZonePayload(name, account);
-            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, "zones"), payload, cancellationToken)
+            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, entityNamePlural), payload, cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -71,7 +71,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"zones/{identifier}"), cancellationToken)
+            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{entityNamePlural}/{identifier}"), cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -119,7 +119,7 @@
                 queryString = "?" + string.Join('&', parameters);
             }
 
-            var uri = new Uri(baseUri, $"zones{queryString}");
+            var uri = new Uri(baseUri, $"{entityNamePlural}{queryString}");
             return await restClient.GetAsync<EntityList<Zone>>(uri, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -132,7 +132,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            var uri = new Uri(baseUri, $"zones/{identifier}/activation_check");
+            var uri = new Uri(baseUri, $"{entityNamePlural}/{identifier}/activation_check");
             return await restClient.PutAsync<IdResult>(uri, cancellationToken);
         }
 
@@ -151,7 +151,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            var uri = new Uri(baseUri, $"zones/{identifier}/purge_cache");
+            var uri = new Uri(baseUri, $"{entityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeCachePayload(purgeEverything);
             return await restClient.PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
         }
@@ -168,7 +168,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"zones/{identifier}"), cancellationToken)
+            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"{entityNamePlural}/{identifier}"), cancellationToken)
                 .ConfigureAwait(false);
         }
     }
