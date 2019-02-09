@@ -6,12 +6,14 @@ namespace Kenc.Cloudflare.Core.Tests
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Clients;
     using Kenc.Cloudflare.Core.Clients.EntityClients;
+    using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.Exceptions;
     using Kenc.Cloudflare.Core.PayloadEntities;
     using Kenc.Cloudflare.Core.Payloads;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Match = Clients.Enums.Match;
 
     [TestClass]
     public class ZoneClientTests
@@ -77,7 +79,7 @@ namespace Kenc.Cloudflare.Core.Tests
 
         [DataTestMethod]
         [DynamicData(nameof(ZoneClient_ListPassesAppropriateParameters_Data), DynamicDataSourceType.Method)]
-        public async Task ZoneClient_ListPassesAppropriateParameters(string name, string status, int? page, int? perPage, string order, string direction, string match, string expected)
+        public async Task ZoneClient_ListPassesAppropriateParameters(string name, ZoneStatus? status, int? page, int? perPage, string order, Direction? direction, Match? match, string expected)
         {
             var zone = new EntityList<Zone>();
             var restClient = new Mock<IRestClient>();
@@ -95,9 +97,9 @@ namespace Kenc.Cloudflare.Core.Tests
         public static IEnumerable<object[]> ZoneClient_ListPassesAppropriateParameters_Data()
         {
             yield return new object[] { "example.invalid", null, null, null, null, null, null, "name=example.invalid" };
-            yield return new object[] { "example.invalid", "active", null, null, null, null, null, "name=example.invalid&status=active" };
-            yield return new object[] { "example.invalid", "active", 1, 20, "status", "desc", "all", "name=example.invalid&status=active&page=1&per_page=20&order=status&direction=desc&match=all" };
-            yield return new object[] { null, "active", 1, 20, null, null, null, "status=active&page=1&per_page=20" };
+            yield return new object[] { "example.invalid", ZoneStatus.Active, null, null, null, null, null, "name=example.invalid&status=active" };
+            yield return new object[] { "example.invalid", ZoneStatus.Active, 1, 20, "status", Direction.Desc, Match.All, "name=example.invalid&status=active&page=1&per_page=20&order=status&direction=desc&match=all" };
+            yield return new object[] { null, ZoneStatus.Deactivated, 1, 20, null, null, null, "status=deactivated&page=1&per_page=20" };
         }
 
         [TestMethod]

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
 
     public interface IZoneClient
@@ -10,16 +11,16 @@
         /// <summary>
         /// List zones.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="status"></param>
-        /// <param name="page"></param>
-        /// <param name="perPage"></param>
-        /// <param name="order"></param>
-        /// <param name="direction"></param>
-        /// <param name="match"></param>
+        /// <param name="domain">Filter to include this domain.</param>
+        /// <param name="status">Filter for status.</param>
+        /// <param name="page">Page (when paging results).</param>
+        /// <param name="perPage">Results per page.</param>
+        /// <param name="order">Sorting order.</param>
+        /// <param name="direction">Sorting direction.</param>
+        /// <param name="match">Match settings.</param>
         /// <returns></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IList<Zone>> ListAsync(string name = null, string status = null, int? page = null, int? perPage = null, string order = null, string direction = null, string match = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<Zone>> ListAsync(string domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Retrieves a single zone based on <paramref name="identifier"/>.

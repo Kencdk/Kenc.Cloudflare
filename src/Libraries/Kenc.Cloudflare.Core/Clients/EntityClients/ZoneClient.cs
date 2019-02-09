@@ -5,7 +5,9 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
+    using Kenc.Cloudflare.Core.Helpers;
     using Kenc.Cloudflare.Core.PayloadEntities;
     using Kenc.Cloudflare.Core.Payloads;
 
@@ -73,17 +75,17 @@
                 .ConfigureAwait(false);
         }
 
-        public async Task<IList<Zone>> ListAsync(string name = null, string status = null, int? page = null, int? perPage = null, string order = null, string direction = null, string match = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IList<Zone>> ListAsync(string domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var parameters = new List<string>();
-            if (!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(domain))
             {
-                parameters.Add($"{nameof(name)}={name}");
+                parameters.Add($"name={domain}");
             }
 
-            if (!string.IsNullOrEmpty(status))
+            if (status.HasValue)
             {
-                parameters.Add($"{nameof(status)}={status}");
+                parameters.Add($"{nameof(status)}={status.ConvertToString()}");
             }
 
             if (page.HasValue)
@@ -101,14 +103,14 @@
                 parameters.Add($"{nameof(order)}={order}");
             }
 
-            if (!string.IsNullOrEmpty(direction))
+            if (direction.HasValue)
             {
-                parameters.Add($"{nameof(direction)}={direction}");
+                parameters.Add($"{nameof(direction)}={direction.ConvertToString()}");
             }
 
-            if (!string.IsNullOrEmpty(match))
+            if (match.HasValue)
             {
-                parameters.Add($"{nameof(match)}={match}");
+                parameters.Add($"{nameof(match)}={match.ConvertToString()}");
             }
 
             var queryString = string.Empty;
