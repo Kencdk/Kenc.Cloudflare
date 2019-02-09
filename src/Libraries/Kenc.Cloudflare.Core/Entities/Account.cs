@@ -9,12 +9,12 @@
     public class Account : ICloudflareEntity
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty(propertyName: "name")]
-        string Name { get; set; }
+        public string Name { get; set; }
 
         [JsonProperty(propertyName: "settings")]
-        AccountSettings Settings { get; set; }
+        public AccountSettings Settings { get; set; }
     }
 }

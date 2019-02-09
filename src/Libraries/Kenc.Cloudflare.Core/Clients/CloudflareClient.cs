@@ -13,7 +13,7 @@
         {
             restClient = restClientFactory.CreateRestClient(username, apiKey);
 
-            Zones = new ZoneClient(restClient);
+            Zones = new ZoneClient(restClient, endpoint);
             UserClient = new UserClient(restClient, endpoint);
         }
 

@@ -43,5 +43,16 @@
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
         Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+
+        /// <summary>
+        /// Sends a DELETE request to the <paramref name="uri"/>
+        /// </summary>
+        /// <param name="uri">Endpoint to target.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>An async Task.</returns>
+        /// <exception cref="CloudflareException"></exception>
+        Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+
+        Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
     }
 }

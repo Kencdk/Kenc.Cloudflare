@@ -1,6 +1,7 @@
 ﻿namespace Kenc.Cloudflare.Core.Clients.EntityClients
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Entities;
 
@@ -18,17 +19,26 @@
         /// <param name="match"></param>
         /// <returns></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IList<Zone>> GetZonesAsync(string name = null, string status = null, int? page = null, int? perPage = null, string order = null, string direction = null, string match = null);
+        Task<IList<Zone>> ListAsync(string name = null, string status = null, int? page = null, int? perPage = null, string order = null, string direction = null, string match = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
-        /// 
+        /// Retrieves a single zone based on <paramref name="identifier"/>.
         /// </summary>
-        /// <param name="identifier"></param>
-        /// <returns></returns>
+        /// <param name="identifier">Zone identifier.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see cref="Zone"/></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<Zone> GetZoneAsync(string identifier);
+        Task<Zone> GetAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken));
 
-        Task<Zone> CreateZoneAsync(string name, Account account);
+        /// <summary>
+        /// Create a new zone
+        /// </summary>
+        /// <param name="name">Name of the zone.</param>
+        /// <param name="account">Account object with name and id.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see cref="Zone"/>.</returns>
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        Task<Zone> CreateAsync(string name, Account account, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// 
@@ -39,22 +49,34 @@
         /// <param name="planId"></param>
         /// <returns></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null);
-
-        /// <summary>
-        /// Attempts to delete a Zone.
-        /// </summary>
-        /// <param name="identifier">Identifier of the target Zone.</param>
-        /// <returns>The identifier if succesful.</returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<string> DeleteZoneAsync(string identifier);
+        Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Initiate another zone activation check for the target zone.
         /// </summary>
         /// <param name="identifier">Target zone identifier.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Identifier of the new zone check.</returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<string> InitiateZoneActivationCheckAsync(string identifier);
+        Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Remove ALL files from Cloudflares cache.
+        /// </summary>
+        /// <param name="identifier">Target zone identifier.</param>
+        /// <param name="purgeEverything">Purge everything?</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Identifier of the new zone check.</returns>
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        Task<IdResult> PurgeAllFiles(string identifier, bool purgeEverything, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Attempts to delete a zone identified by <paramref name="identifier"/>
+        /// </summary>
+        /// <param name="identifier">Identifier of the zone to delete.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
