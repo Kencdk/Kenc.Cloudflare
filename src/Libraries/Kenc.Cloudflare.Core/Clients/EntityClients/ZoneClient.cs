@@ -13,10 +13,12 @@
 
     public class ZoneClient : IZoneClient
     {
-        private readonly string entityNamePlural = "zones";
+        public static readonly string entityNamePlural = "zones";
 
         private readonly Uri baseUri;
         private readonly IRestClient restClient;
+
+        public IZoneSettingsClient Settings { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ZoneClient"/>
@@ -26,6 +28,8 @@
         {
             this.baseUri = baseUri;
             this.restClient = restClient;
+
+            Settings = new ZoneSettingsClient(restClient, baseUri);
         }
 
         /// <summary>
@@ -124,7 +128,18 @@
                 .ConfigureAwait(false);
         }
 
+        public Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            throw new NotImplementedException();
+        }
 
+        /// <summary>
+        /// Initiate another zone activation check for the target zone.
+        /// </summary>
+        /// <param name="identifier">Target zone identifier.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Identifier of the new zone check.</returns>
+        /// <exception cref="Exceptions.CloudflareException"></exception>
         public async Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (string.IsNullOrEmpty(identifier))
@@ -156,9 +171,21 @@
             return await restClient.PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
         }
 
-        public Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default(CancellationToken))
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(identifier))
+            {
+                throw new ArgumentNullException(nameof(identifier));
+            }
+
+            if ((tags == null || !tags.Any()) && (hosts == null || !hosts.Any()))
+            {
+                throw new ArgumentOutOfRangeException(nameof(tags), "Tags and hosts can't both be null/empty.");
+            }
+
+            var uri = new Uri(baseUri, $"{entityNamePlural}/{identifier}/purge_cache");
+            var payload = new PurgeFilesByTagsOrHostsPayload(tags, hosts);
+            return await restClient.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
         }
 
         public async Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken))

@@ -6,8 +6,10 @@
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
 
-    public interface IZoneClient
+    public interface IZoneClient : IEntityClient
     {
+        IZoneSettingsClient Settings { get; }
+
         /// <summary>
         /// List zones.
         /// </summary>
@@ -70,6 +72,18 @@
         /// <returns>Identifier of the new zone check.</returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
         Task<IdResult> PurgeAllFiles(string identifier, bool purgeEverything, CancellationToken cancellationToken = default(CancellationToken));
+
+        /// <summary>
+        /// Granularly remove one or more files from Cloudflare's cache either by specifying the host or the associated Cache-Tag.
+        /// </summary>
+        /// <param name="identifier">Target zone identifier.</param>
+        /// <param name="tags">Array of tags to clean/</param>
+        /// <param name="hosts">Array of hosts to clean.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Identifier of the operation.</returns>
+        /// <remarks>Enterprise only feature.</remarks>
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Attempts to delete a zone identified by <paramref name="identifier"/>

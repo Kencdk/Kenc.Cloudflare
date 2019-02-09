@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Entities;
 
-    public interface IUserClient
+    public interface IUserClient : IEntityClient
     {
         /// <summary>
         /// Gets the currently logged in/authenticated User

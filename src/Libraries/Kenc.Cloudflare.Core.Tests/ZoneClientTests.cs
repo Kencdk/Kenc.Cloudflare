@@ -322,5 +322,78 @@ namespace Kenc.Cloudflare.Core.Tests
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
             var result = await zoneClient.PurgeAllFiles(identifier, true);
         }
+
+        [DataTestMethod]
+        [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsCallsRestClient_Data), DynamicDataSourceType.Method)]
+        public async Task ZoneClient_PurgeFilesByTagsOrHostsCallsRestClient(string[] tags, string[] hosts)
+        {
+            var idResult = new IdResult();
+            var restClient = new Mock<IRestClient>();
+            restClient.Setup(
+                x => x.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(
+                    It.IsAny<Uri>(), It.IsAny<PurgeFilesByTagsOrHostsPayload>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(idResult);
+
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var result = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
+
+            // assert
+            Assert.AreSame(idResult, result, "The returned zone object should have been passed through");
+            restClient.Verify(x =>
+                x.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(
+                        It.Is<Uri>(y => y.PathAndQuery == $"/client/v4/zones/{zoneIdentifier}/purge_cache"),
+                        It.Is<PurgeFilesByTagsOrHostsPayload>(y => y.Hosts == hosts && y.Tags == tags),
+                        It.IsAny<CancellationToken>()),
+                    Times.Once,
+                    "Post should have been called on the REST client.");
+        }
+
+        public static IEnumerable<object[]> ZoneClient_PurgeFilesByTagsOrHostsCallsRestClient_Data()
+        {
+            yield return new object[] { new string[] { "some-tag", "another-tag" }, new string[] { "www.example.invalid", "images.example.invalid" } };
+            yield return new object[] { new string[] { }, new string[] { "www.example.invalid", "images.example.invalid" } };
+            yield return new object[] { new string[] { "some-tag", "another-tag" }, new string[] { } };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(CloudflareException))]
+        public async Task ZoneClient_PurgeFilesByTagsOrHostsDoesntSwallowExceptions()
+        {
+            var restClient = new Mock<IRestClient>();
+            restClient.Setup(
+                x => x.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(
+                    It.IsAny<Uri>(), It.IsAny<PurgeFilesByTagsOrHostsPayload>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new CloudflareException(new List<CloudflareAPIError> {
+                    new CloudflareAPIError("1049", "<domain> is not a registered domain")
+                }));
+
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var result = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, new string[] { "some-tag" }, new string[] { "example.invalid" });
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidIdentifierInputs()
+        {
+            var restClient = new Mock<IRestClient>();
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var result = await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, new string[] { "tags" }, new string[] { "hosts" });
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs_Data), DynamicDataSourceType.Method)]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs(string[] tags, string[] hosts)
+        {
+            var restClient = new Mock<IRestClient>();
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var result = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
+        }
+
+        public static IEnumerable<object[]> ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs_Data()
+        {
+            yield return new object[] { null, null };
+            yield return new object[] { new string[] { }, new string[] { } };
+        }
     }
 }
