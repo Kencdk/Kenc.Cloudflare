@@ -32,7 +32,7 @@
                 throw new ArgumentNullException(nameof(zoneIdentifier));
             }
 
-            var uri = new Uri(baseUri, $"{ZoneClient.entityNamePlural}/{zoneIdentifier}/{entityNamePlural}");
+            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}");
             return await restClient.GetAsync<EntityList<ZoneSetting>>(uri, cancellationToken);
         }
 
@@ -55,7 +55,7 @@
                 throw new ArgumentNullException(nameof(name));
             }
 
-            var uri = new Uri(baseUri, $"{ZoneClient.entityNamePlural}/{zoneIdentifier}/{entityNamePlural}/{name}");
+            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}/{name}");
             return await restClient.GetAsync<ZoneSetting>(uri, cancellationToken);
         }
     }

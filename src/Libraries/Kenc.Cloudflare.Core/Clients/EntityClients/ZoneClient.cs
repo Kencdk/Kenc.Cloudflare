@@ -13,7 +13,7 @@
 
     public class ZoneClient : IZoneClient
     {
-        public static readonly string entityNamePlural = "zones";
+        public static readonly string EntityNamePlural = "zones";
 
         private readonly Uri baseUri;
         private readonly IRestClient restClient;
@@ -58,7 +58,7 @@
             }
 
             var payload = new CreateZonePayload(name, account);
-            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, entityNamePlural), payload, cancellationToken)
+            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -75,7 +75,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{entityNamePlural}/{identifier}"), cancellationToken)
+            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -123,7 +123,7 @@
                 queryString = "?" + string.Join('&', parameters);
             }
 
-            var uri = new Uri(baseUri, $"{entityNamePlural}{queryString}");
+            var uri = new Uri(baseUri, $"{EntityNamePlural}{queryString}");
             return await restClient.GetAsync<EntityList<Zone>>(uri, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -147,7 +147,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            var uri = new Uri(baseUri, $"{entityNamePlural}/{identifier}/activation_check");
+            var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/activation_check");
             return await restClient.PutAsync<IdResult>(uri, cancellationToken);
         }
 
@@ -166,7 +166,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            var uri = new Uri(baseUri, $"{entityNamePlural}/{identifier}/purge_cache");
+            var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeCachePayload(purgeEverything);
             return await restClient.PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
         }
@@ -183,7 +183,7 @@
                 throw new ArgumentOutOfRangeException(nameof(tags), "Tags and hosts can't both be null/empty.");
             }
 
-            var uri = new Uri(baseUri, $"{entityNamePlural}/{identifier}/purge_cache");
+            var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeFilesByTagsOrHostsPayload(tags, hosts);
             return await restClient.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
         }
@@ -195,7 +195,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"{entityNamePlural}/{identifier}"), cancellationToken)
+            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken)
                 .ConfigureAwait(false);
         }
     }
