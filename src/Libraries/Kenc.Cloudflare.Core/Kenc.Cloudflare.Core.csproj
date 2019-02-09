@@ -4,6 +4,23 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <!-- nuget package properties -->
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Ken Christensen</Authors>
+    <Company>Ken Christensen</Company>
+    <PackageId>Kenc.Cloudflare</PackageId>
+    <Product>Kenc.Cloudflare</Product>
+    <PackageDescription>.net core library for communicating with Cloudflare API v4.</PackageDescription>
+    <PackageLicenseUrl>https://github.com/Kencdk/Kenc.Cloudflare/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+
+    <PackageTags>Cloudflare dotnetcore</PackageTags>
+    <Copyright>2019 Ken Christensen</Copyright>
+    <Description>.net core library for communicating with Cloudflare API.</Description>
+  </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
@@ -11,4 +28,5 @@
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
+  
 </Project>
