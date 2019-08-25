@@ -5,7 +5,7 @@
 
     public class CloudflareClient : ICloudflareClient
     {
-        public static Uri V4Endpoint = new Uri("https://api.cloudflare.com/client/v4/");
+        public readonly static Uri V4Endpoint = new Uri("https://api.cloudflare.com/client/v4/");
 
         private readonly IRestClient restClient;
 

@@ -20,6 +20,8 @@
 
         public IZoneSettingsClient Settings { get; private set; }
 
+        public IZoneDNSSettingsClient DNSSettings { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ZoneClient"/>
         /// </summary>
@@ -30,6 +32,7 @@
             this.restClient = restClient;
 
             Settings = new ZoneSettingsClient(restClient, baseUri);
+            DNSSettings = new ZoneDNSSettingsClient(restClient, baseUri);
         }
 
         /// <summary>

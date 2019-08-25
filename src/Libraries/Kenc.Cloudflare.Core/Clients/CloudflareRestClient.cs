@@ -91,7 +91,7 @@
                 var response = await client.GetAsync(uri, cancellationToken)
                     .ConfigureAwait(false);
 
-                return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
+                return (await HandleResponse<TResult>(response)).Result;
             }
         }
 
