@@ -1,7 +1,6 @@
 ﻿namespace Kenc.Cloudflare.Core.Clients
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Net;
     using System.Net.Http;
@@ -18,26 +17,16 @@
     {
         private const string AuthHeaderKey = "X-Auth-Key";
         private const string AuthHeaderUsername = "X-Auth-Email";
-
-        private const string TextPlainMime = "text/plain";
         private const string ApplicationJsonMime = "application/json";
-        private const string ApplicationYamlMime = "application/x-yaml";
-        private const string ApplicationOctetSctreamMime = "application/octet-stream";
-
-        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
-        {
-            Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore
-        };
 
         private readonly string apiKey;
         private readonly string username;
         private readonly string UserAgent;
 
-        private readonly HashSet<HttpStatusCode> PositiveStatusCodes = new HashSet<HttpStatusCode>
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
-            HttpStatusCode.OK,
-            HttpStatusCode.NotModified
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Ignore
         };
 
         private readonly JsonMediaTypeFormatter jsonMediaTypeFormatter;
@@ -68,7 +57,7 @@
 
             jsonMediaTypeFormatter = new JsonMediaTypeFormatter()
             {
-                UseDataContractJsonSerializer = true
+                SerializerSettings = JsonSettings
             };
 
             var client = typeof(CloudflareRestClient);
@@ -88,9 +77,7 @@
         {
             using (var client = GetClient())
             {
-                var response = await client.GetAsync(uri, cancellationToken)
-                    .ConfigureAwait(false);
-
+                var response = await client.GetAsync(uri, cancellationToken);
                 return (await HandleResponse<TResult>(response)).Result;
             }
         }
@@ -110,10 +97,9 @@
             using (var client = GetClient())
             {
                 var objectContent = new ObjectContent<TMessage>(message, jsonMediaTypeFormatter);
-                var response = await client.PatchAsync(uri, objectContent, cancellationToken)
-                    .ConfigureAwait(false);
+                var response = await client.PatchAsync(uri, objectContent, cancellationToken);
 
-                return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
+                return (await HandleResponse<TResult>(response)).Result;
             }
         }
 
@@ -131,10 +117,8 @@
         {
             using (var client = GetClient())
             {
-                var response = await client.PostAsync(uri, message, jsonMediaTypeFormatter, cancellationToken)
-                    .ConfigureAwait(false);
-
-                return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
+                var response = await client.PostAsync(uri, message, jsonMediaTypeFormatter, cancellationToken);
+                return (await HandleResponse<TResult>(response)).Result;
             }
         }
 
@@ -149,8 +133,7 @@
         {
             using (var client = GetClient())
             {
-                await client.DeleteAsync(uri, cancellationToken)
-                    .ConfigureAwait(false);
+                await client.DeleteAsync(uri, cancellationToken);
             }
         }
 
@@ -158,25 +141,18 @@
         {
             using (var client = GetClient())
             {
-                var response = await client.DeleteAsync(uri, cancellationToken)
-                    .ConfigureAwait(false);
-
-                return (await HandleResponse<TResult>(response)
-                        .ConfigureAwait(false))
+                var response = await client.DeleteAsync(uri, cancellationToken);
+                return (await HandleResponse<TResult>(response))
                         .Result;
             }
         }
 
-        public async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity
+        public async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
             using (var client = GetClient())
             {
-                var response = await client.PutAsync(uri, new StringContent(string.Empty))
-                    .ConfigureAwait(false);
-
-                return (await HandleResponse<TResult>(response)
-                        .ConfigureAwait(false))
-                        .Result;
+                var response = await client.PutAsync(uri, new StringContent(string.Empty));
+                return (await HandleResponse<TResult>(response)).Result;
             }
         }
 

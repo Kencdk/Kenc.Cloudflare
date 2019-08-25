@@ -31,6 +31,18 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
             Assert.AreNotEqual(0, dnsRecords.Count);
         }
 
+        [TestMethod]
+        public async Task CreateTextRecord()
+        {
+            var recordIdentifier = $"_intTest{System.DateTime.UtcNow.ToString("yyyymmddhhMM")}";
+            var domainId = (string)TestContext.Properties["domainId"];
+
+            var client = CreateClient();
+            var record = await client.Zones.DNSSettings.CreateRecordAsync(domainId, recordIdentifier, Clients.Enums.DNSRecordType.TXT, recordIdentifier);
+            Assert.IsNotNull(record);
+            Assert.AreEqual(recordIdentifier, record.Content);
+        }
+
         private Clients.CloudflareClient CreateClient()
         {
             var apiKey = (string)TestContext.Properties["cloudflareapikey"];

@@ -22,7 +22,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="EntityList{DNSRecord}" /></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves a single DNS record.
@@ -31,7 +31,20 @@
         /// <param name="name">Target dns setting name.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
-        Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default(CancellationToken));
+        Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Creates a new DNS record
+        /// </summary>
+        /// <param name="zoneIdentifier">Target zone identifier.</param>
+        /// <param name="name">Target dns setting name.</param>
+        /// <param name="type">DNS record type.</param>
+        /// <param name="content">Content of the DNS record.</param>
+        /// <param name="ttl">Time to live</param>
+        /// <param name="priority">Priority</param>
+        /// <param name="proxied">Wether traffic is proxied.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see cref="DNSRecord"/></returns>
+        Task<DNSRecord> CreateRecordAsync(string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl = null, int? priority = null, bool? proxied = null, CancellationToken cancellationToken = default);
     }
 }
