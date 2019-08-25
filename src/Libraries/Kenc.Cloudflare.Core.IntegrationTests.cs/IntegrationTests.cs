@@ -4,6 +4,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
+    [TestCategory("IntegrationTests")]
     public class DNSScenarioTests
     {
         public TestContext TestContext { get; set; }
@@ -11,8 +12,8 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
         [TestMethod]
         public async Task GetDomain()
         {
-            var domainId = (string)TestContext.Properties["domainId"];
-            var domainName = (string)TestContext.Properties["domainName"];
+            var domainId = TestContextSetting("domainId");
+            var domainName = TestContextSetting("domainName");
 
             var client = CreateClient();
             var domain = await client.Zones.ListAsync(domainName, Clients.Enums.ZoneStatus.Active);
@@ -23,7 +24,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
         [TestMethod]
         public async Task ListTxtRecords()
         {
-            var domainId = (string)TestContext.Properties["domainId"];
+            var domainId = TestContextSetting("domainId");
 
             var client = CreateClient();
             var dnsRecords = await client.Zones.DNSSettings.ListAsync(domainId, Clients.Enums.DNSRecordType.TXT);
@@ -35,7 +36,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
         public async Task CreateTextRecord()
         {
             var recordIdentifier = $"_intTest{System.DateTime.UtcNow.ToString("yyyymmddhhMM")}";
-            var domainId = (string)TestContext.Properties["domainId"];
+            var domainId = TestContextSetting("domainId");
 
             var client = CreateClient();
             var record = await client.Zones.DNSSettings.CreateRecordAsync(domainId, recordIdentifier, Clients.Enums.DNSRecordType.TXT, recordIdentifier);
@@ -45,11 +46,21 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
 
         private Clients.CloudflareClient CreateClient()
         {
-            var apiKey = (string)TestContext.Properties["cloudflareapikey"];
-            var username = (string)TestContext.Properties["cloudflareusername"];
+            var apiKey = TestContextSetting("cloudflareapikey");
+            var username = TestContextSetting("cloudflareusername");
 
             var restFactory = new Clients.CloudflareRestClientFactory(Clients.CloudflareClient.V4Endpoint);
             return new Clients.CloudflareClient(restFactory, username, apiKey, Clients.CloudflareClient.V4Endpoint);
+        }
+
+        private string TestContextSetting(string name)
+        {
+            if (TestContext.Properties.TryGetValue(name, out object value))
+            {
+                return (string)value;
+            }
+
+            return System.Environment.GetEnvironmentVariable(name);
         }
     }
 }
