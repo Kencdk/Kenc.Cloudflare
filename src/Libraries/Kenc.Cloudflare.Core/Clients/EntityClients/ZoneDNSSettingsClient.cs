@@ -8,6 +8,7 @@
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.Helpers;
+    using Kenc.Cloudflare.Core.Payloads;
 
     public class ZoneDNSSettingsClient : IZoneDNSSettingsClient
     {
@@ -24,6 +25,27 @@
         {
             this.baseUri = baseUri;
             this.restClient = restClient;
+        }
+
+        public async Task<DNSRecord> CreateRecordAsync(string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl, int? priority, bool? proxied, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(zoneIdentififer))
+            {
+                throw new ArgumentNullException(nameof(zoneIdentififer));
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrEmpty(content))
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            var payload = new CreateDNSRecord(name, type, content, ttl, priority, proxied);
+            return await restClient.PostAsync<CreateDNSRecord, DNSRecord>(new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}"), payload, cancellationToken);
         }
 
         /// <summary>
@@ -114,8 +136,7 @@
             }
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{EntityNamePlural}{queryString}");
-            return await restClient.GetAsync<EntityList<DNSRecord>>(uri, cancellationToken)
-                .ConfigureAwait(false);
+            return await restClient.GetAsync<EntityList<DNSRecord>>(uri, cancellationToken);
         }
     }
 }

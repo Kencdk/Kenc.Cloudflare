@@ -20,6 +20,8 @@
 
         public IZoneSettingsClient Settings { get; private set; }
 
+        public IZoneDNSSettingsClient DNSSettings { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ZoneClient"/>
         /// </summary>
@@ -30,6 +32,7 @@
             this.restClient = restClient;
 
             Settings = new ZoneSettingsClient(restClient, baseUri);
+            DNSSettings = new ZoneDNSSettingsClient(restClient, baseUri);
         }
 
         /// <summary>
@@ -58,8 +61,7 @@
             }
 
             var payload = new CreateZonePayload(name, account);
-            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken)
-                .ConfigureAwait(false);
+            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken);
         }
 
         /// <summary>
@@ -75,8 +77,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken)
-                .ConfigureAwait(false);
+            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
         }
 
         public async Task<IList<Zone>> ListAsync(string domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -124,8 +125,7 @@
             }
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}{queryString}");
-            return await restClient.GetAsync<EntityList<Zone>>(uri, cancellationToken)
-                .ConfigureAwait(false);
+            return await restClient.GetAsync<EntityList<Zone>>(uri, cancellationToken);
         }
 
         public Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -195,8 +195,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken)
-                .ConfigureAwait(false);
+            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
         }
     }
 }

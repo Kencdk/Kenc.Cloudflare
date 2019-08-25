@@ -9,6 +9,7 @@
     public interface IZoneClient : IEntityClient
     {
         IZoneSettingsClient Settings { get; }
+        IZoneDNSSettingsClient DNSSettings { get; }
 
         /// <summary>
         /// List zones.

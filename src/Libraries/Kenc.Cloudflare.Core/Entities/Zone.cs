@@ -11,61 +11,61 @@
     public class Zone : ICloudflareEntity
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// max length: 253
         /// pattern: ^([a - zA - Z0 - 9][\-a - zA - Z0 - 9]*\.)+[\-a-zA-Z0-9]{2,20}$
         /// </summary>
         [JsonProperty(propertyName: "name")]
-        string Name { get; set; }
+        public string Name { get; set; }
 
         [JsonProperty(propertyName: "development_mode")]
-        int DevelopmentMode { get; set; }
+        public int DevelopmentMode { get; set; }
 
         [JsonProperty(propertyName: "original_name_servers")]
-        IList<string> OriginalNameServers { get; set; }
+        public IList<string> OriginalNameServers { get; set; }
 
         [JsonProperty(propertyName: "original_registrar")]
-        string OriginalRegistrar { get; set; }
+        public string OriginalRegistrar { get; set; }
 
         [JsonProperty(propertyName: "original_dnshost")]
-        string OriginalDnsHost { get; set; }
+        public string OriginalDnsHost { get; set; }
 
         [JsonProperty(propertyName: "created_on")]
-        DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         [JsonProperty(propertyName: "modified_on")]
-        DateTime? ModifiedOn { get; set; }
+        public DateTime? ModifiedOn { get; set; }
 
         [JsonProperty(propertyName: "activated_on")]
-        DateTime? ActivatedOn { get; set; }
+        public DateTime? ActivatedOn { get; set; }
 
         [JsonProperty(propertyName: "owner")]
-        ZoneOwner Owner { get; set; }
+        public ZoneOwner Owner { get; set; }
 
         [JsonProperty(propertyName: "Account")]
-        Account Account { get; set; }
+        public Account Account { get; set; }
 
         [JsonProperty(propertyName: "permissions")]
-        IList<string> Permissions { get; set; }
+        public IList<string> Permissions { get; set; }
 
         [JsonProperty(propertyName: "plan")]
-        Plan Plan { get; set; }
+        public Plan Plan { get; set; }
 
         [JsonProperty(propertyName: "plan_pending")]
-        Plan PlanPending { get; set; }
+        public Plan PlanPending { get; set; }
 
         [JsonProperty(propertyName: "status")]
-        string Status { get; set; }
+        public string Status { get; set; }
 
         [JsonProperty(propertyName: "paused")]
-        bool Paused { get; set; }
+        public bool Paused { get; set; }
 
         [JsonProperty(propertyName: "type")]
-        string Type { get; set; }
+        public string Type { get; set; }
 
         [JsonProperty(propertyName: "name_servers")]
-        IList<string> NameServers { get; set; }
+        public IList<string> NameServers { get; set; }
     }
 }
