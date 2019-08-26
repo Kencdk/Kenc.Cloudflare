@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.329
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kenc.Cloudflare.Core.Tests", "Libraries\Kenc.Cloudflare.Core.Tests\Kenc.Cloudflare.Core.Tests.csproj", "{F5E4EE5A-739E-4BDC-B5D9-816F6DB5BD23}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kenc.Cloudflare.Core", "Libraries\Kenc.Cloudflare.Core\Kenc.Cloudflare.Core.csproj", "{61811FD8-A1AA-45B3-83EA-FD9A07F5539E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenc.Cloudflare.Core.IntegrationTests.cs", "Libraries\Kenc.Cloudflare.Core.IntegrationTests.cs\Kenc.Cloudflare.Core.IntegrationTests.cs.csproj", "{F968AD02-2A00-41BF-80A4-3B30774FEA92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kenc.Cloudflare.Core.IntegrationTests", "Libraries\Kenc.Cloudflare.Core.IntegrationTests\Kenc.Cloudflare.Core.IntegrationTests.csproj", "{E8A4AED0-F4F8-4594-BDD1-3236414BF411}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{61811FD8-A1AA-45B3-83EA-FD9A07F5539E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61811FD8-A1AA-45B3-83EA-FD9A07F5539E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61811FD8-A1AA-45B3-83EA-FD9A07F5539E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F968AD02-2A00-41BF-80A4-3B30774FEA92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F968AD02-2A00-41BF-80A4-3B30774FEA92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F968AD02-2A00-41BF-80A4-3B30774FEA92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F968AD02-2A00-41BF-80A4-3B30774FEA92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A4AED0-F4F8-4594-BDD1-3236414BF411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A4AED0-F4F8-4594-BDD1-3236414BF411}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A4AED0-F4F8-4594-BDD1-3236414BF411}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A4AED0-F4F8-4594-BDD1-3236414BF411}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
