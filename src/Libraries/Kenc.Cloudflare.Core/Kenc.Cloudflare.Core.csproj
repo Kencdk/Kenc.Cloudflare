@@ -5,13 +5,9 @@
   </PropertyGroup>
 
   <!-- nuget package properties -->
-
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Ken Christensen</Authors>
-    <Company>Ken Christensen</Company>
     <PackageId>Kenc.Cloudflare</PackageId>
-    <Product>Kenc.Cloudflare</Product>
     <PackageDescription>.net core library for communicating with Cloudflare API v4.</PackageDescription>
     <PackageLicenseUrl>https://github.com/Kencdk/Kenc.Cloudflare/blob/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -28,7 +24,5 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Runtime" Version="4.3.0" />
-  </ItemGroup>
-
-  
+  </ItemGroup> 
 </Project>
