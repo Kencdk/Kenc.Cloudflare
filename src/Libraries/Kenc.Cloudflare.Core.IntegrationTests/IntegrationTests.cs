@@ -1,4 +1,4 @@
-namespace Kenc.Cloudflare.Core.IntegrationTests.cs
+namespace Kenc.Cloudflare.Core.IntegrationTests
 {
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -55,9 +55,9 @@ namespace Kenc.Cloudflare.Core.IntegrationTests.cs
 
         private string TestContextSetting(string name)
         {
-            if (TestContext.Properties.TryGetValue(name, out object value))
+            if (TestContext.Properties.Contains(name))
             {
-                return (string)value;
+                return (string)TestContext.Properties[name];
             }
 
             return System.Environment.GetEnvironmentVariable(name);

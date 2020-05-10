@@ -47,7 +47,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 }));
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.GetAsync(zoneIdentifier);
+            _ = await zoneClient.GetAsync(zoneIdentifier);
         }
 
         [DataTestMethod]
@@ -58,7 +58,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.GetAsync(identifier);
+            _ = await zoneClient.GetAsync(identifier);
         }
 
         [TestMethod]
@@ -113,7 +113,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 }));
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.ListAsync();
+            _ = await zoneClient.ListAsync();
         }
 
         [TestMethod]
@@ -155,7 +155,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 Id = "01a7362d577a6c3019a474fd6f485823",
                 Name = "Demo Account"
             };
-            var result = await zoneClient.CreateAsync("example.invalid", account);
+            _ = await zoneClient.CreateAsync("example.invalid", account);
         }
 
         [DataTestMethod]
@@ -176,7 +176,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 Id = accountId,
                 Name = accountName
             };
-            var result = await zoneClient.CreateAsync(name, account);
+            _ = await zoneClient.CreateAsync(name, account);
         }
 
         [TestMethod]
@@ -210,7 +210,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
 
             var identifier = "1235678";
-            var result = await zoneClient.DeleteAsync(identifier);
+            _ = await zoneClient.DeleteAsync(identifier);
         }
 
         [DataTestMethod]
@@ -221,7 +221,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.DeleteAsync(identifier);
+            _ = await zoneClient.DeleteAsync(identifier);
         }
 
         [TestMethod]
@@ -229,7 +229,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var idResult = new IdResult();
             var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.PutAsync<IdResult>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+            restClient.Setup(x => x.PutAsync<object, IdResult>(It.IsAny<Uri>(), null, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(idResult);
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
@@ -238,8 +238,9 @@ namespace Kenc.Cloudflare.Core.Tests
             // assert
             Assert.AreSame(idResult, result, "The returned zone object should have been passed through");
             restClient.Verify(x =>
-                x.PutAsync<IdResult>(
+                x.PutAsync<object, IdResult>(
                         It.Is<Uri>(y => y.PathAndQuery == $"/client/v4/zones/{zoneIdentifier}/activation_check"),
+                        null,
                         It.IsAny<CancellationToken>()),
                     Times.Once,
                     "Put should have been called on the REST client.");
@@ -250,13 +251,13 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_InitiateZoneActivationCheckDoesntSwallowExceptions()
         {
             var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.PutAsync<IdResult>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+            restClient.Setup(x => x.PutAsync<object, IdResult>(It.IsAny<Uri>(), null, It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new CloudflareException(new List<CloudflareAPIError> {
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.InitiateZoneActivationCheckAsync(zoneIdentifier);
+            _ = await zoneClient.InitiateZoneActivationCheckAsync(zoneIdentifier);
         }
 
         [DataTestMethod]
@@ -267,7 +268,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.InitiateZoneActivationCheckAsync(identifier);
+            _ = await zoneClient.InitiateZoneActivationCheckAsync(identifier);
         }
 
         [DataTestMethod]
@@ -309,7 +310,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 }));
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.PurgeAllFiles(zoneIdentifier, true);
+            _ = await zoneClient.PurgeAllFiles(zoneIdentifier, true);
         }
 
         [DataTestMethod]
@@ -320,7 +321,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.PurgeAllFiles(identifier, true);
+            _ = await zoneClient.PurgeAllFiles(identifier, true);
         }
 
         [DataTestMethod]
@@ -368,7 +369,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 }));
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, new string[] { "some-tag" }, new string[] { "example.invalid" });
+            _ = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, new string[] { "some-tag" }, new string[] { "example.invalid" });
         }
 
         [TestMethod]
@@ -377,7 +378,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, new string[] { "tags" }, new string[] { "hosts" });
+            _ = await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, new string[] { "tags" }, new string[] { "hosts" });
         }
 
         [DataTestMethod]
@@ -387,7 +388,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
+            _ = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
         }
 
         public static IEnumerable<object[]> ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs_Data()
