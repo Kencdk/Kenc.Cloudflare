@@ -10,6 +10,9 @@
     using Kenc.Cloudflare.Core.Helpers;
     using Kenc.Cloudflare.Core.Payloads;
 
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
     public class ZoneDNSSettingsClient : IZoneDNSSettingsClient
     {
         public static readonly string EntityNamePlural = "dns_records";
@@ -18,7 +21,7 @@
         private readonly IRestClient restClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ZoneClient"/>
+        /// Initializes a new instance of the <see cref="ZoneClient"/> class.
         /// </summary>
         /// <param name="restClient">Client to use to send requests.</param>
         public ZoneDNSSettingsClient(IRestClient restClient, Uri baseUri)
@@ -48,13 +51,6 @@
             return await restClient.PostAsync<CreateDNSRecord, DNSRecord>(new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}"), payload, cancellationToken);
         }
 
-        /// <summary>
-        /// Retrieves a single DNS record.
-        /// </summary>
-        /// <param name="zoneIdentifier">Target zone identifier.</param>
-        /// <param name="name">Target dns setting name.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="DNSRecord"/></returns>
         public async Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
@@ -71,21 +67,6 @@
             return await restClient.GetAsync<DNSRecord>(uri, cancellationToken);
         }
 
-        /// <summary>
-        /// List, search, sort, and filter a zones' DNS records.
-        /// </summary>
-        /// <param name="zoneIdentifier">Target zone identifier.</param>
-        /// <param name="type">DNS record type.</param>
-        /// <param name="name">DNS record name.</param>
-        /// <param name="content">DNS record content.</param>
-        /// <param name="page">Page number of paginated results.</param>
-        /// <param name="perPage">Number of DNS records per page.</param>
-        /// <param name="order">Field to order records by.</param>
-        /// <param name="direction">Direction to order domains.</param>
-        /// <param name="match">Whether to match all search requirements or at least one (any).</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="EntityList{DNSRecord}" /></returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
         public async Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
             var parameters = new List<string>();
@@ -139,7 +120,7 @@
             return await restClient.GetAsync<EntityList<DNSRecord>>(uri, cancellationToken);
         }
 
-        public async Task<DNSRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl, bool? proxied, CancellationToken cancellationToken = default)
+        public async Task<DNSRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType type, string content, int ttl, bool proxied, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentififer))
             {
