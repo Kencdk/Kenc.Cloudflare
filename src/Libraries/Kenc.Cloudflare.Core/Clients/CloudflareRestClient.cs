@@ -146,10 +146,10 @@
                     .Result;
         }
 
-        public async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
+        public async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
             using var client = GetClient();
-            var response = await client.PutAsync(uri, new StringContent(string.Empty))
+            var response = await client.PutAsync(uri, payload, jsonMediaTypeFormatter, cancellationToken)
                 .ConfigureAwait(false);
 
             return (await HandleResponse<TResult>(response)

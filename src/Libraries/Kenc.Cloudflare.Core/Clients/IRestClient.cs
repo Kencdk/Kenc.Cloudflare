@@ -18,7 +18,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<TResult> GetAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+        Task<TResult> GetAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity;
 
         /// <summary>
         /// Sends a PATCH request to the <paramref name="uri"/>.
@@ -30,7 +30,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+        Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity;
 
         /// <summary>
         /// Sends a POST request to the <paramref name="uri"/>.
@@ -42,7 +42,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+        Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity;
 
         /// <summary>
         /// Sends a DELETE request to the <paramref name="uri"/>
@@ -51,8 +51,17 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An async Task.</returns>
         /// <exception cref="CloudflareException"></exception>
-        Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+        Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity;
 
-        Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity;
+        /// <summary>
+        /// Sends a PUT request to the <paramref name="uri"/>
+        /// </summary>
+        /// <typeparam name="TMessage">Type of data to send.</typeparam>
+        /// <typeparam name="TResult">Type of message to receive.</typeparam>
+        /// <param name="uri">Endpoint to target.</param>
+        /// <param name="message">Payload to the request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity;
     }
 }

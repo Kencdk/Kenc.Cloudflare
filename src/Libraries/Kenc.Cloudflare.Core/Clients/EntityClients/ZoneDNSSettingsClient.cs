@@ -139,7 +139,51 @@
             return await restClient.GetAsync<EntityList<DNSRecord>>(uri, cancellationToken);
         }
 
-        public async Task<IdResult> DeleteRecord(DNSRecord record, CancellationToken cancellationToken = default)
+        public async Task<DNSRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl, bool? proxied, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(zoneIdentififer))
+            {
+                throw new ArgumentNullException(nameof(zoneIdentififer));
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrEmpty(content))
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
+            var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");
+            return await restClient.PutAsync<UpdateDNSRecord, DNSRecord>(uri, payload, cancellationToken);
+        }
+
+        public Task<DNSRecord> UpdateRecordAsync(DNSRecord dnsRecord, CancellationToken cancellationToken = default)
+        {
+            return UpdateRecordAsync(dnsRecord.Id, dnsRecord.ZoneId, dnsRecord.Name, dnsRecord.Type, dnsRecord.Content, dnsRecord.TimeToLive, dnsRecord.Proxied, cancellationToken);
+        }
+
+        public async Task<DNSRecord> PatchDNSRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType? type, string? content, int? ttl, bool? proxied, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(zoneIdentififer))
+            {
+                throw new ArgumentNullException(nameof(zoneIdentififer));
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
+            var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");
+            return await restClient.PatchAsync<UpdateDNSRecord, DNSRecord>(uri, payload, cancellationToken);
+        }
+
+        public async Task<IdResult> DeleteRecordAsync(DNSRecord record, CancellationToken cancellationToken = default)
         {
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{record.ZoneId}/{EntityNamePlural}/{record.Id}");
             return await restClient.DeleteAsync<IdResult>(uri, cancellationToken)

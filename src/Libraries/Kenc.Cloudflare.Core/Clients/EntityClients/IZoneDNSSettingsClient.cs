@@ -52,6 +52,6 @@
         /// <param name="record">DNS Record to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="IdResult"/></returns>
-        Task<IdResult> DeleteRecord(DNSRecord record, CancellationToken cancellationToken = default);
+        Task<IdResult> DeleteRecordAsync(DNSRecord record, CancellationToken cancellationToken = default);
     }
 }
