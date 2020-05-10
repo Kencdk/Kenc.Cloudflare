@@ -6,15 +6,15 @@
     public class ZoneSetting : ICloudflareEntity
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty(propertyName: "value")]
-        string Value { get; set; }
+        public string Value { get; set; }
 
         [JsonProperty(propertyName: "editable")]
-        bool Editable { get; set; }
+        public bool Editable { get; set; }
 
         [JsonProperty(propertyName: "modified_on")]
-        DateTime ModifiedOn { get; set; }
+        public DateTime ModifiedOn { get; set; }
     }
 }

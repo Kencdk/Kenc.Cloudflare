@@ -140,7 +140,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Identifier of the new zone check.</returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        public async Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
             {
@@ -148,7 +148,7 @@
             }
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/activation_check");
-            return await restClient.PutAsync<IdResult>(uri, cancellationToken);
+            return await restClient.PutAsync<object, IdResult>(uri, null, cancellationToken);
         }
 
         /// <summary>

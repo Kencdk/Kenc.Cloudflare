@@ -33,7 +33,6 @@
         /// <returns><see cref="DNSRecord"/></returns>
         Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default);
 
-        /// <summary>
         /// Creates a new DNS record
         /// </summary>
         /// <param name="zoneIdentifier">Target zone identifier.</param>
@@ -46,5 +45,42 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
         Task<DNSRecord> CreateRecordAsync(string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl = null, int? priority = null, bool? proxied = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Delete a single DNS record.
+        /// </summary>
+        /// <param name="record">DNS Record to delete.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see cref="IdResult"/></returns>
+        Task<IdResult> DeleteRecordAsync(DNSRecord record, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Patch a DNS record.
+        /// Pass in the required fields along with any optional field.
+        /// </summary>
+        /// <param name="recordId">Record id.</param>
+        /// <param name="zoneIdentififer">Zone identifier.</param>
+        /// <param name="name">Name of the entry.</param>
+        /// <param name="type">Type, optional. Will update record if specified.</param>
+        /// <param name="content">Content, optional. Will update the record if specified.</param>
+        /// <param name="ttl">Time to live, optional. Will update the record if specified.</param>
+        /// <param name="proxied">Wether the connection should be proxied, optional. Will update the record if specified.</param>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <returns><see cref="DNSRecord"/></returns>
+        Task<DNSRecord> PatchDNSRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType? type, string? content, int? ttl, bool? proxied, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Update a DNS record.
+        /// </summary>
+        /// <param name="recordId">Record id.</param>
+        /// <param name="zoneIdentififer">Zone identifier.</param>
+        /// <param name="name">Name of the entry.</param>
+        /// <param name="type">DNS entry type</param>
+        /// <param name="content">DNS entry content.</param>
+        /// <param name="ttl">Time to live.</param>
+        /// <param name="proxied">Wether the connection should be proxied.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns></returns>
+        Task<DNSRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType type, string content, int ttl, bool proxied, CancellationToken cancellationToken = default);
     }
 }
