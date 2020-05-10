@@ -33,7 +33,6 @@
         /// <returns><see cref="DNSRecord"/></returns>
         Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default);
 
-        /// <summary>
         /// Creates a new DNS record
         /// </summary>
         /// <param name="zoneIdentifier">Target zone identifier.</param>
@@ -46,5 +45,13 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
         Task<DNSRecord> CreateRecordAsync(string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl = null, int? priority = null, bool? proxied = null, CancellationToken cancellationToken = default);
+    
+        /// <summary>
+        /// Delete a single DNS record.
+        /// </summary>
+        /// <param name="record">DNS Record to delete.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see cref="IdResult"/></returns>
+        Task<IdResult> DeleteRecord(DNSRecord record, CancellationToken cancellationToken = default);
     }
 }

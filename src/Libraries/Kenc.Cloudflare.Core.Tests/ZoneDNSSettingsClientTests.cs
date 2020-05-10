@@ -47,7 +47,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 }));
 
             var client = new ZoneDNSSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await client.GetAsync(zoneIdentifier, "domain.invalid");
+            _ = await client.GetAsync(zoneIdentifier, "domain.invalid");
         }
 
         [DataTestMethod]
@@ -60,7 +60,7 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var restClient = new Mock<IRestClient>();
             var client = new ZoneDNSSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await client.GetAsync(identifier, name);
+            _ = await client.GetAsync(identifier, name);
         }
 
         [TestMethod]
@@ -125,7 +125,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 }));
 
             var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.ListAsync();
+            _ = await zoneClient.ListAsync();
         }
     }
 }

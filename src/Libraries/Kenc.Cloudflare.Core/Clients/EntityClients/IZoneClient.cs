@@ -23,7 +23,7 @@
         /// <param name="match">Match settings.</param>
         /// <returns></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IList<Zone>> ListAsync(string domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IList<Zone>> ListAsync(string domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves a single zone based on <paramref name="identifier"/>.
@@ -32,7 +32,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="Zone"/></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<Zone> GetAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken));
+        Task<Zone> GetAsync(string identifier, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Create a new zone
@@ -42,7 +42,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="Zone"/>.</returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<Zone> CreateAsync(string name, Account account, CancellationToken cancellationToken = default(CancellationToken));
+        Task<Zone> CreateAsync(string name, Account account, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -53,7 +53,7 @@
         /// <param name="planId"></param>
         /// <returns></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Initiate another zone activation check for the target zone.
@@ -62,7 +62,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Identifier of the new zone check.</returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Remove ALL files from Cloudflares cache.
@@ -72,7 +72,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Identifier of the new zone check.</returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IdResult> PurgeAllFiles(string identifier, bool purgeEverything, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IdResult> PurgeAllFiles(string identifier, bool purgeEverything, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Granularly remove one or more files from Cloudflare's cache either by specifying the host or the associated Cache-Tag.
@@ -84,7 +84,7 @@
         /// <returns>Identifier of the operation.</returns>
         /// <remarks>Enterprise only feature.</remarks>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Attempts to delete a zone identified by <paramref name="identifier"/>
@@ -93,6 +93,6 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken));
+        Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default);
     }
 }

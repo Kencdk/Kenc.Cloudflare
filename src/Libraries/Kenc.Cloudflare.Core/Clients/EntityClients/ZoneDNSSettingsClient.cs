@@ -55,7 +55,7 @@
         /// <param name="name">Target dns setting name.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
-        public async Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
             {
@@ -86,7 +86,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="EntityList{DNSRecord}" /></returns>
         /// <exception cref="Exceptions.CloudflareException"></exception>
-        public async Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
             var parameters = new List<string>();
             if (type.HasValue)
@@ -137,6 +137,13 @@
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{EntityNamePlural}{queryString}");
             return await restClient.GetAsync<EntityList<DNSRecord>>(uri, cancellationToken);
+        }
+
+        public async Task<IdResult> DeleteRecord(DNSRecord record, CancellationToken cancellationToken = default)
+        {
+            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{record.ZoneId}/{EntityNamePlural}/{record.Id}");
+            return await restClient.DeleteAsync<IdResult>(uri, cancellationToken)
+                .ConfigureAwait(false);
         }
     }
 }

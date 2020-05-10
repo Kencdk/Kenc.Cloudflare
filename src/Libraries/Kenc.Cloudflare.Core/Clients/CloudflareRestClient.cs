@@ -60,9 +60,9 @@
                 SerializerSettings = JsonSettings
             };
 
-            var client = typeof(CloudflareRestClient);
+            Type client = typeof(CloudflareRestClient);
             var runtimeVersion = client.Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
-            UserAgent = $"{client.FullName}/{runtimeVersion.Version.ToString()} ({RuntimeInformation.OSDescription} {RuntimeInformation.ProcessArchitecture})";
+            UserAgent = $"{client.FullName}/{runtimeVersion.Version} ({RuntimeInformation.OSDescription} {RuntimeInformation.ProcessArchitecture})";
         }
 
         /// <summary>
@@ -73,13 +73,13 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task<TResult> GetAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity
+        public async Task<TResult> GetAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
-            using (var client = GetClient())
-            {
-                var response = await client.GetAsync(uri, cancellationToken);
-                return (await HandleResponse<TResult>(response)).Result;
-            }
+            using var client = GetClient();
+            var response = await client.GetAsync(uri, cancellationToken)
+                .ConfigureAwait(false);
+
+            return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
         }
 
         /// <summary>
@@ -92,15 +92,14 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity
+        public async Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
-            using (var client = GetClient())
-            {
-                var objectContent = new ObjectContent<TMessage>(message, jsonMediaTypeFormatter);
-                var response = await client.PatchAsync(uri, objectContent, cancellationToken);
+            using var client = GetClient();
+            var objectContent = new ObjectContent<TMessage>(message, jsonMediaTypeFormatter);
+            var response = await client.PatchAsync(uri, objectContent, cancellationToken)
+                .ConfigureAwait(false);
 
-                return (await HandleResponse<TResult>(response)).Result;
-            }
+            return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
         }
 
         /// <summary>
@@ -113,13 +112,13 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity
+        public async Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
-            using (var client = GetClient())
-            {
-                var response = await client.PostAsync(uri, message, jsonMediaTypeFormatter, cancellationToken);
-                return (await HandleResponse<TResult>(response)).Result;
-            }
+            using var client = GetClient();
+            var response = await client.PostAsync(uri, message, jsonMediaTypeFormatter, cancellationToken)
+                .ConfigureAwait(false);
+
+            return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
         }
 
         /// <summary>
@@ -129,31 +128,33 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An async Task.</returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task DeleteAsync(Uri uri, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task DeleteAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            using (var client = GetClient())
-            {
-                await client.DeleteAsync(uri, cancellationToken);
-            }
+            using var client = this.GetClient();
+            await client.DeleteAsync(uri, cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        public async Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default(CancellationToken)) where TResult : ICloudflareEntity
+        public async Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
-            using (var client = GetClient())
-            {
-                var response = await client.DeleteAsync(uri, cancellationToken);
-                return (await HandleResponse<TResult>(response))
-                        .Result;
-            }
+            using var client = GetClient();
+            var response = await client.DeleteAsync(uri, cancellationToken)
+                .ConfigureAwait(false);
+
+            return (await HandleResponse<TResult>(response)
+                    .ConfigureAwait(false))
+                    .Result;
         }
 
         public async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
         {
-            using (var client = GetClient())
-            {
-                var response = await client.PutAsync(uri, new StringContent(string.Empty));
-                return (await HandleResponse<TResult>(response)).Result;
-            }
+            using var client = GetClient();
+            var response = await client.PutAsync(uri, new StringContent(string.Empty))
+                .ConfigureAwait(false);
+
+            return (await HandleResponse<TResult>(response)
+                    .ConfigureAwait(false))
+                    .Result;
         }
 
         private async Task<CloudflareResult<TResult>> HandleResponse<TResult>(HttpResponseMessage httpResponseMessage) where TResult : ICloudflareEntity
@@ -175,7 +176,7 @@
 
         private HttpClient GetClient()
         {
-            var client = httpClientFactory.CreateClient("Cloudflare");
+            HttpClient client = httpClientFactory.CreateClient("Cloudflare");
             client.DefaultRequestHeaders.Add(AuthHeaderKey, apiKey);
             client.DefaultRequestHeaders.Add(AuthHeaderUsername, username);
             client.DefaultRequestHeaders.Add(HttpRequestHeader.UserAgent.ToString(), UserAgent);

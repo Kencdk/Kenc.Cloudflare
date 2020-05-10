@@ -15,10 +15,13 @@
 
             Zones = new ZoneClient(restClient, endpoint);
             UserClient = new UserClient(restClient, endpoint);
+            ZoneDNSSettingsClient = new ZoneDNSSettingsClient(restClient, endpoint);
         }
 
         public IZoneClient Zones { get; private set; }
 
         public IUserClient UserClient { get; private set; }
+
+        public IZoneDNSSettingsClient ZoneDNSSettingsClient { get; private set; }
     }
 }

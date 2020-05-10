@@ -7,5 +7,7 @@
         IZoneClient Zones { get; }
 
         IUserClient UserClient { get; }
+
+        IZoneDNSSettingsClient ZoneDNSSettingsClient { get; }
     }
 }
