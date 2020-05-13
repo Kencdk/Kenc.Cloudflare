@@ -8,6 +8,6 @@
     /// <typeparam name="T">The type of items.</typeparam>
     public class EntityList<T> : List<T>, ICloudflareEntity where T : ICloudflareEntity
     {
-        // todo KENCHR: consider changing to IReadOnlyList.
+        // todo Kencdk: consider changing to IReadOnlyList.
     }
 }

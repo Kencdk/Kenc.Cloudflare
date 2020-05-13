@@ -10,39 +10,39 @@
     public class User : ICloudflareEntity
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonProperty(propertyName: "email")]
-        string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [JsonProperty(propertyName: "first_name")]
-        string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
 
         [JsonProperty(propertyName: "last_name")]
-        string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
 
         [JsonProperty(propertyName: "username")]
-        string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [JsonProperty(propertyName: "telephone")]
-        string Telephone { get; set; }
+        public string? Telephone { get; set; }
 
         [JsonProperty(propertyName: "country")]
-        string Country { get; set; }
+        public string? Country { get; set; }
 
         [JsonProperty(propertyName: "zipcode")]
-        string Zipcode { get; set; }
+        public string? Zipcode { get; set; }
 
         [JsonProperty(propertyName: "created_on")]
-        DateTime CreatedOn { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         [JsonProperty(propertyName: "modified_on")]
-        DateTime ModifiedOn { get; set; }
+        public DateTime ModifiedOn { get; set; }
 
         [JsonProperty(propertyName: "two_factor_authentication_enabled")]
-        bool TwoFactorAuthenticationEnabled { get; set; }
+        public bool TwoFactorAuthenticationEnabled { get; set; }
 
         [JsonProperty(propertyName: "suspended")]
-        bool Suspended { get; set; }
+        public bool Suspended { get; set; }
     }
 }

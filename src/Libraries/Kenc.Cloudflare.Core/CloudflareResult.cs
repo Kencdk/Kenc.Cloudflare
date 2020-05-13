@@ -1,10 +1,11 @@
 ﻿namespace Kenc.Cloudflare.Core
 {
     using System.Collections.Generic;
+    using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.Exceptions;
     using Newtonsoft.Json;
 
-    public class CloudflareResult<T>
+    public class CloudflareResult<T> where T : class, ICloudflareEntity
     {
         [JsonProperty(propertyName: "result")]
         public T Result { get; set; }

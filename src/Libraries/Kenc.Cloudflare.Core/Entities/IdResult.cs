@@ -5,6 +5,6 @@
     public class IdResult : ICloudflareEntity
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
     }
 }

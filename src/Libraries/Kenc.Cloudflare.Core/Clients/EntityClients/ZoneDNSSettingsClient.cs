@@ -11,8 +11,9 @@
     using Kenc.Cloudflare.Core.Payloads;
 
     /// <summary>
-    /// <inheritdoc/>
+    /// Implementation of <see cref="IZoneDNSSettingsClient"/>.
     /// </summary>
+    /// <inheritdoc/>
     public class ZoneDNSSettingsClient : IZoneDNSSettingsClient
     {
         public static readonly string EntityNamePlural = "dns_records";
@@ -67,7 +68,7 @@
             return await restClient.GetAsync<DNSRecord>(uri, cancellationToken);
         }
 
-        public async Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
+        public async Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string? name = null, string? content = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
             var parameters = new List<string>();
             if (type.HasValue)
@@ -149,15 +150,9 @@
 
         public async Task<DNSRecord> PatchDNSRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType? type, string? content, int? ttl, bool? proxied, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(zoneIdentififer))
-            {
-                throw new ArgumentNullException(nameof(zoneIdentififer));
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+            _ = string.IsNullOrEmpty(name) ? throw new ArgumentNullException(nameof(name)) : name;
+            _ = string.IsNullOrEmpty(recordId) ? throw new ArgumentNullException(nameof(recordId)) : recordId;
+            _ = string.IsNullOrEmpty(zoneIdentififer) ? throw new ArgumentNullException(nameof(zoneIdentififer)) : zoneIdentififer;
 
             var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
             var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");

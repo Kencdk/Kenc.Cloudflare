@@ -28,7 +28,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.GetAsync<Zone>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.GetAsync(zoneIdentifier);
 
             // assert
@@ -46,7 +46,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.GetAsync(zoneIdentifier);
         }
 
@@ -57,7 +57,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.GetAsync(identifier);
         }
 
@@ -69,7 +69,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.GetAsync<EntityList<Zone>>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.ListAsync();
 
             // assert
@@ -86,7 +86,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.GetAsync<EntityList<Zone>>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.ListAsync(name, status, page, perPage, order, direction, match);
 
             // assert
@@ -112,7 +112,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.ListAsync();
         }
 
@@ -124,7 +124,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.PostAsync<CreateZonePayload, Zone>(It.IsAny<Uri>(), It.IsAny<CreateZonePayload>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
 
             var account = new Account
             {
@@ -148,7 +148,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
 
             var account = new Account
             {
@@ -169,7 +169,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_CreateThrowsArgumentExceptionForInvalidIdentifierInputs(string name, string accountId, string accountName)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
 
             var account = new Account
             {
@@ -187,7 +187,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.DeleteAsync<IdResult>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(idResult);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
 
             var identifier = "1235678";
             var result = await zoneClient.DeleteAsync(identifier);
@@ -207,7 +207,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1001", "Invalid zone identifier")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
 
             var identifier = "1235678";
             _ = await zoneClient.DeleteAsync(identifier);
@@ -220,7 +220,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_DeleteThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.DeleteAsync(identifier);
         }
 
@@ -229,18 +229,17 @@ namespace Kenc.Cloudflare.Core.Tests
         {
             var idResult = new IdResult();
             var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.PutAsync<object, IdResult>(It.IsAny<Uri>(), null, It.IsAny<CancellationToken>()))
+            restClient.Setup(x => x.PutAsync<IdResult>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(idResult);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.InitiateZoneActivationCheckAsync(zoneIdentifier);
 
             // assert
             Assert.AreSame(idResult, result, "The returned zone object should have been passed through");
             restClient.Verify(x =>
-                x.PutAsync<object, IdResult>(
+                x.PutAsync<IdResult>(
                         It.Is<Uri>(y => y.PathAndQuery == $"/client/v4/zones/{zoneIdentifier}/activation_check"),
-                        null,
                         It.IsAny<CancellationToken>()),
                     Times.Once,
                     "Put should have been called on the REST client.");
@@ -251,12 +250,12 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_InitiateZoneActivationCheckDoesntSwallowExceptions()
         {
             var restClient = new Mock<IRestClient>();
-            restClient.Setup(x => x.PutAsync<object, IdResult>(It.IsAny<Uri>(), null, It.IsAny<CancellationToken>()))
+            restClient.Setup(x => x.PutAsync<IdResult>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new CloudflareException(new List<CloudflareAPIError> {
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.InitiateZoneActivationCheckAsync(zoneIdentifier);
         }
 
@@ -267,7 +266,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_InitiateZoneActivationCheckThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.InitiateZoneActivationCheckAsync(identifier);
         }
 
@@ -283,7 +282,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     It.IsAny<Uri>(), It.IsAny<PurgeCachePayload>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(idResult);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.PurgeAllFiles(zoneIdentifier, purgeAll);
 
             // assert
@@ -309,7 +308,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.PurgeAllFiles(zoneIdentifier, true);
         }
 
@@ -320,7 +319,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_PurgeAllFilesThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.PurgeAllFiles(identifier, true);
         }
 
@@ -335,7 +334,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     It.IsAny<Uri>(), It.IsAny<PurgeFilesByTagsOrHostsPayload>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(idResult);
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
 
             // assert
@@ -368,7 +367,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, new string[] { "some-tag" }, new string[] { "example.invalid" });
         }
 
@@ -377,7 +376,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidIdentifierInputs()
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, new string[] { "tags" }, new string[] { "hosts" });
         }
 
@@ -387,7 +386,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs(string[] tags, string[] hosts)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             _ = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
         }
 

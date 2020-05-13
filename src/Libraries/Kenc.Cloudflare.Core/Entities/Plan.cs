@@ -8,27 +8,27 @@
     public class Plan
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonProperty(propertyName: "name")]
-        string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty(propertyName: "price")]
-        int Price { get; set; }
+        public int Price { get; set; }
 
         [JsonProperty(propertyName: "currency")]
-        string Currency { get; set; }
+        public string? Currency { get; set; }
 
         [JsonProperty(propertyName: "frequency")]
-        string Fequency { get; set; }
+        public string? Fequency { get; set; }
 
         [JsonProperty(propertyName: "legacy_id")]
-        string LegacyId { get; set; }
+        public string? LegacyId { get; set; }
 
         [JsonProperty(propertyName: "is_subscribed")]
-        bool IsSubscribed { get; set; }
+        public bool IsSubscribed { get; set; }
 
         [JsonProperty(propertyName: "can_subscribe")]
-        bool CanSubscribe { get; set; }
+        public bool CanSubscribe { get; set; }
     }
 }
