@@ -28,8 +28,8 @@
         /// <param name="restClient">Client to use to send requests.</param>
         public ZoneClient(IRestClient restClient, Uri baseUri)
         {
-            this.baseUri = baseUri;
-            this.restClient = restClient;
+            this.baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
+            this.restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
 
             Settings = new ZoneSettingsClient(restClient, baseUri);
             DNSSettings = new ZoneDNSSettingsClient(restClient, baseUri);
@@ -42,8 +42,8 @@
         /// <param name="account">Account object with name and id.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="Zone"/>.</returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        public async Task<Zone> CreateAsync(string name, Account account, CancellationToken cancellationToken = default(CancellationToken))
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        public async Task<Zone> CreateAsync(string name, Account account, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -69,8 +69,8 @@
         /// </summary>
         /// <param name="identifier">Zone identifier.</param>
         /// <returns><see cref="Zone"/></returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        public async Task<Zone> GetAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken))
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        public async Task<Zone> GetAsync(string identifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
             {
@@ -80,7 +80,7 @@
             return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
         }
 
-        public async Task<IList<Zone>> ListAsync(string domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IList<Zone>> ListAsync(string? domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
             var parameters = new List<string>();
             if (!string.IsNullOrEmpty(domain))
@@ -128,7 +128,7 @@
             return await restClient.GetAsync<EntityList<Zone>>(uri, cancellationToken);
         }
 
-        public Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string> vanityNameServers = null, string planId = null, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string>? vanityNameServers = null, string? planId = null, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -139,7 +139,7 @@
         /// <param name="identifier">Target zone identifier.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Identifier of the new zone check.</returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         public async Task<IdResult> InitiateZoneActivationCheckAsync(string identifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
@@ -148,7 +148,7 @@
             }
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/activation_check");
-            return await restClient.PutAsync<object, IdResult>(uri, null, cancellationToken);
+            return await restClient.PutAsync<IdResult>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -158,8 +158,8 @@
         /// <param name="purgeEverything">Purge everything?</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Identifier of the new zone check.</returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        public async Task<IdResult> PurgeAllFiles(string identifier, bool purgeEverything, CancellationToken cancellationToken = default(CancellationToken))
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        public async Task<IdResult> PurgeAllFiles(string identifier, bool purgeEverything, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
             {
@@ -171,7 +171,7 @@
             return await restClient.PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
         }
 
-        public async Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
             {
@@ -184,11 +184,11 @@
             }
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
-            var payload = new PurgeFilesByTagsOrHostsPayload(tags, hosts);
+            var payload = new PurgeFilesByTagsOrHostsPayload(tags ?? new string[0], hosts ?? new string[0]);
             return await restClient.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
         }
 
-        public async Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
             {

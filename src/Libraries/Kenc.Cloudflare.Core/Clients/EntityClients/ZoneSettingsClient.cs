@@ -24,8 +24,8 @@
         /// <param name="zoneIdentifier">Target zone identifier.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An <see cref="EntityList{ZoneSetting}" /></returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        public async Task<EntityList<ZoneSetting>> ListAsync(string zoneIdentifier, CancellationToken cancellationToken = default(CancellationToken))
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        public async Task<EntityList<ZoneSetting>> ListAsync(string zoneIdentifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
             {
@@ -43,7 +43,7 @@
         /// <param name="name">Target setting name.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
-        public async Task<ZoneSetting> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<ZoneSetting> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
             {

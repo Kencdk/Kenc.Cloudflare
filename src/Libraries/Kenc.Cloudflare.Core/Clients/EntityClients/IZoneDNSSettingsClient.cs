@@ -21,8 +21,8 @@
         /// <param name="match">Whether to match all search requirements or at least one (any).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="EntityList{DNSRecord}" /></returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string name = null, string content = null, int? page = null, int? perPage = null, string order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default);
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string? name = null, string? content = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Retrieves a single DNS record.
@@ -31,6 +31,7 @@
         /// <param name="name">Target dns setting name.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default);
 
         /// Creates a new DNS record
@@ -44,6 +45,7 @@
         /// <param name="proxied">Wether traffic is proxied.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         Task<DNSRecord> CreateRecordAsync(string zoneIdentififer, string name, DNSRecordType type, string content, int? ttl = null, int? priority = null, bool? proxied = null, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -52,6 +54,7 @@
         /// <param name="record">DNS Record to delete.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="IdResult"/></returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         Task<IdResult> DeleteRecordAsync(DNSRecord record, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -67,6 +70,7 @@
         /// <param name="proxied">Wether the connection should be proxied, optional. Will update the record if specified.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns><see cref="DNSRecord"/></returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         Task<DNSRecord> PatchDNSRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType? type, string? content, int? ttl, bool? proxied, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -81,6 +85,7 @@
         /// <param name="proxied">Wether the connection should be proxied.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns></returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         Task<DNSRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType type, string content, int ttl, bool proxied, CancellationToken cancellationToken = default);
     }
 }

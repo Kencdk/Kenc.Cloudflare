@@ -11,8 +11,8 @@
         /// </summary>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="User"/> object.</returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<User> GetUserAsync(CancellationToken cancellationToken = default(CancellationToken));
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        Task<User> GetUserAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Edit part of your user details
@@ -24,7 +24,7 @@
         /// <param name="zipcode">Zipcode</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="User"/> object.</returns>
-        /// <exception cref="Exceptions.CloudflareException"></exception>
-        Task<User> PatchUserAsync(string firstName = null, string lastName = null, string telephone = null, string country = null, string zipcode = null, CancellationToken cancellationToken = default(CancellationToken));
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        Task<User> PatchUserAsync(string? firstName = null, string? lastName = null, string? telephone = null, string? country = null, string? zipcode = null, CancellationToken cancellationToken = default);
     }
 }

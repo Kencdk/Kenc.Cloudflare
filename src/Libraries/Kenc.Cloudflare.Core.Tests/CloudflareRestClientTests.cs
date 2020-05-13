@@ -32,7 +32,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 .Returns(httpClient);
 
             var cloudflareRestClient = new CloudflareRestClient(httpClientFactory.Object, "username", "apikey");
-            var user = await cloudflareRestClient.GetAsync<User>(new System.Uri(CloudflareClient.V4Endpoint, "user"));
+            var user = await cloudflareRestClient.GetAsync<User>(new System.Uri(CloudflareAPIEndpoint.V4Endpoint, "user"));
 
             // assert
             httpClientFactory.Verify(x => x.CreateClient(It.IsAny<string>()), Times.Once, $"{nameof(CloudflareRestClient)} should have called httpClientFactory.CreateClient())");
@@ -58,7 +58,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 .Returns(httpClient);
 
             var cloudflareRestClient = new CloudflareRestClient(httpClientFactory.Object, "username", "apikey");
-            var user = await cloudflareRestClient.GetAsync<User>(new System.Uri(CloudflareClient.V4Endpoint, "user"));
+            var user = await cloudflareRestClient.GetAsync<User>(new System.Uri(CloudflareAPIEndpoint.V4Endpoint, "user"));
         }
 
         [DataTestMethod]
@@ -84,10 +84,10 @@ namespace Kenc.Cloudflare.Core.Tests
                 .Returns(httpClient);
 
             var cloudflareRestClient = new CloudflareRestClient(httpClientFactory.Object, "username", "apikey");
-            var user = await cloudflareRestClient.GetAsync<User>(new System.Uri(CloudflareClient.V4Endpoint, "user"));
+            var user = await cloudflareRestClient.GetAsync<User>(new System.Uri(CloudflareAPIEndpoint.V4Endpoint, "user"));
         }
 
-        private HttpResponseMessage CreateResponseMessage<TResponse>(HttpStatusCode statuscode, CloudflareResult<TResponse> response)
+        private HttpResponseMessage CreateResponseMessage<TResponse>(HttpStatusCode statuscode, CloudflareResult<TResponse> response) where TResponse : class, ICloudflareEntity
         {
             return new HttpResponseMessage()
             {

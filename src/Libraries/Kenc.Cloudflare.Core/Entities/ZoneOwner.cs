@@ -5,12 +5,12 @@
     public class ZoneOwner
     {
         [JsonProperty(propertyName: "id")]
-        string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonProperty(propertyName: "name")]
-        string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty(propertyName: "type")]
-        string Type { get; set; }
+        public string? Type { get; set; }
     }
 }

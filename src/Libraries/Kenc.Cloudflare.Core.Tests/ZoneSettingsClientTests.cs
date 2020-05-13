@@ -24,7 +24,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.GetAsync<ZoneSetting>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.GetAsync(zoneIdentifier, "setting");
 
             // assert
@@ -45,7 +45,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.GetAsync(zoneIdentifier, "setting");
         }
 
@@ -58,8 +58,8 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.GetAsync(identifier, name);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            _ = await zoneClient.GetAsync(identifier, name);
         }
 
         [TestMethod]
@@ -70,7 +70,7 @@ namespace Kenc.Cloudflare.Core.Tests
             restClient.Setup(x => x.GetAsync<EntityList<ZoneSetting>>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.ListAsync(zoneIdentifier);
 
             // assert
@@ -88,8 +88,8 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var restClient = new Mock<IRestClient>();
-            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
-            var result = await zoneClient.ListAsync(identifier);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            _ = await zoneClient.ListAsync(identifier);
         }
 
         [TestMethod]
@@ -102,7 +102,7 @@ namespace Kenc.Cloudflare.Core.Tests
                     new CloudflareAPIError("1049", "<domain> is not a registered domain")
                 }));
 
-            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareClient.V4Endpoint);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
             var result = await zoneClient.ListAsync(zoneIdentifier);
         }
     }

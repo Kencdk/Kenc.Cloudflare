@@ -12,6 +12,6 @@
         /// Boolean value indicating whether or not membership in this account requires that Two-Factor Authentication is enabled
         /// </summary>
         [JsonProperty(propertyName: "enforce_twofactor")]
-        bool EnforceTwofactor { get; set; }
+        public bool EnforceTwofactor { get; set; }
     }
 }

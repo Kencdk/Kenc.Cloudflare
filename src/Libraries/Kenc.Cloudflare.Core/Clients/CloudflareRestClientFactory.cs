@@ -2,26 +2,26 @@
 {
     using System;
     using System.Net.Http;
-    using Microsoft.Extensions.DependencyInjection;
 
+    /// <summary>
+    /// Implementation of <see cref="ICloudflareRestClientFactory"/>
+    /// </summary>
+    /// <inheritdoc/>
     public class CloudflareRestClientFactory : ICloudflareRestClientFactory
     {
-        private readonly ServiceProvider services;
+        private readonly IHttpClientFactory httpClientFactory;
 
-        public CloudflareRestClientFactory(Uri baseUri)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CloudflareRestClientFactory"/>
+        /// </summary>
+        /// <param name="httpClientFactory">Http client factory.</param>
+        public CloudflareRestClientFactory(IHttpClientFactory httpClientFactory)
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddHttpClient("cloudflare", c =>
-            {
-                c.BaseAddress = baseUri;
-            });
-
-            services = serviceCollection.BuildServiceProvider();
+            this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
         public IRestClient CreateRestClient(string username, string password)
         {
-            var httpClientFactory = services.GetService<IHttpClientFactory>();
             return new CloudflareRestClient(httpClientFactory, username, password);
         }
     }

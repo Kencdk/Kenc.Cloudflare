@@ -1,13 +1,13 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.Serialization;
-
-namespace Kenc.Cloudflare.Core.Helpers
+﻿namespace Kenc.Cloudflare.Core.Helpers
 {
+    using System;
+    using System.Reflection;
+    using System.Runtime.Serialization;
+
     public static class EnumValueMemberHelper
     {
         /// <summary>
-        /// Converts an enum value to it's enum member .value.
+        /// Converts an enum value to it's enum member value.
         /// Modified version of: http://www.wackylabs.net/2006/06/getting-the-xmlenumattribute-value-for-an-enum-field/
         /// </summary>
         /// <param name="enumValue"></param>
@@ -15,7 +15,7 @@ namespace Kenc.Cloudflare.Core.Helpers
         public static string ConvertToString(this Enum enumValue)
         {
             // Get the Type of the enum
-            var type = enumValue.GetType();
+            Type type = enumValue.GetType();
 
             // Get the FieldInfo for the member field with the enums name
             FieldInfo info = type.GetField(enumValue.ToString("G"));
@@ -26,8 +26,8 @@ namespace Kenc.Cloudflare.Core.Helpers
                 return enumValue.ToString("G");
             }
 
-            object[] o = info.GetCustomAttributes(typeof(EnumMemberAttribute), false);
-            EnumMemberAttribute att = (EnumMemberAttribute)o[0];
+            var o = info.GetCustomAttributes(typeof(EnumMemberAttribute), false);
+            var att = (EnumMemberAttribute)o[0];
             return att.Value;
         }
     }

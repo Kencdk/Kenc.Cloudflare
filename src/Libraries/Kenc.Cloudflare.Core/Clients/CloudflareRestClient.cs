@@ -13,14 +13,14 @@
     using Kenc.Cloudflare.Core.Exceptions;
     using Newtonsoft.Json;
 
-    public class CloudflareRestClient : IRestClient
+    public class CloudflareRestClient : IRestClient, IDisposable
     {
+        private bool disposed = false;
+
         private const string AuthHeaderKey = "X-Auth-Key";
         private const string AuthHeaderUsername = "X-Auth-Email";
         private const string ApplicationJsonMime = "application/json";
 
-        private readonly string apiKey;
-        private readonly string username;
         private readonly string UserAgent;
 
         private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
@@ -29,9 +29,9 @@
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        private readonly JsonMediaTypeFormatter jsonMediaTypeFormatter;
+        private readonly JsonMediaTypeFormatter jsonMediaTypeFormatter = new JsonMediaTypeFormatter { SerializerSettings = JsonSettings };
 
-        private readonly IHttpClientFactory httpClientFactory;
+        private readonly HttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ACMERestClient"/> class.
@@ -41,28 +41,19 @@
         /// <param name="apiKey">Cloudflare API key.</param>
         public CloudflareRestClient(IHttpClientFactory httpClientFactory, string username, string apiKey)
         {
-            if (string.IsNullOrEmpty(username))
-            {
-                throw new ArgumentNullException(nameof(username));
-            }
-
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                throw new ArgumentNullException(nameof(apiKey));
-            }
-
-            this.apiKey = apiKey;
-            this.username = username;
-            this.httpClientFactory = httpClientFactory;
-
-            jsonMediaTypeFormatter = new JsonMediaTypeFormatter()
-            {
-                SerializerSettings = JsonSettings
-            };
+            _ = string.IsNullOrEmpty(apiKey) ? throw new ArgumentNullException(nameof(apiKey)) : apiKey;
+            _ = string.IsNullOrEmpty(username) ? throw new ArgumentNullException(nameof(username)) : username;
+            _ = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
             Type client = typeof(CloudflareRestClient);
-            var runtimeVersion = client.Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
+            AssemblyFileVersionAttribute runtimeVersion = client.Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
             UserAgent = $"{client.FullName}/{runtimeVersion.Version} ({RuntimeInformation.OSDescription} {RuntimeInformation.ProcessArchitecture})";
+
+            httpClient = httpClientFactory.CreateClient("Cloudflare");
+            httpClient.DefaultRequestHeaders.Add(AuthHeaderKey, apiKey);
+            httpClient.DefaultRequestHeaders.Add(AuthHeaderUsername, username);
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.UserAgent.ToString(), UserAgent);
+            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), ApplicationJsonMime);
         }
 
         /// <summary>
@@ -73,10 +64,9 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task<TResult> GetAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
+        public async Task<TResult> GetAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
         {
-            using var client = GetClient();
-            var response = await client.GetAsync(uri, cancellationToken)
+            HttpResponseMessage response = await httpClient.GetAsync(uri, cancellationToken)
                 .ConfigureAwait(false);
 
             return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
@@ -92,11 +82,10 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
+        public async Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
         {
-            using var client = GetClient();
             var objectContent = new ObjectContent<TMessage>(message, jsonMediaTypeFormatter);
-            var response = await client.PatchAsync(uri, objectContent, cancellationToken)
+            HttpResponseMessage response = await httpClient.PatchAsync(uri, objectContent, cancellationToken)
                 .ConfigureAwait(false);
 
             return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
@@ -112,10 +101,9 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
         /// <exception cref="CloudflareException"></exception>
-        public async Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
+        public async Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
         {
-            using var client = GetClient();
-            var response = await client.PostAsync(uri, message, jsonMediaTypeFormatter, cancellationToken)
+            HttpResponseMessage response = await httpClient.PostAsync(uri, message, jsonMediaTypeFormatter, cancellationToken)
                 .ConfigureAwait(false);
 
             return (await HandleResponse<TResult>(response).ConfigureAwait(false)).Result;
@@ -130,15 +118,13 @@
         /// <exception cref="CloudflareException"></exception>
         public async Task DeleteAsync(Uri uri, CancellationToken cancellationToken = default)
         {
-            using var client = this.GetClient();
-            await client.DeleteAsync(uri, cancellationToken)
+            await httpClient.DeleteAsync(uri, cancellationToken)
                 .ConfigureAwait(false);
         }
 
-        public async Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
+        public async Task<TResult> DeleteAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
         {
-            using var client = GetClient();
-            var response = await client.DeleteAsync(uri, cancellationToken)
+            HttpResponseMessage response = await httpClient.DeleteAsync(uri, cancellationToken)
                 .ConfigureAwait(false);
 
             return (await HandleResponse<TResult>(response)
@@ -146,10 +132,9 @@
                     .Result;
         }
 
-        public async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TResult : ICloudflareEntity
+        public async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
         {
-            using var client = GetClient();
-            var response = await client.PutAsync(uri, payload, jsonMediaTypeFormatter, cancellationToken)
+            HttpResponseMessage response = await httpClient.PutAsync(uri, null, cancellationToken)
                 .ConfigureAwait(false);
 
             return (await HandleResponse<TResult>(response)
@@ -157,14 +142,24 @@
                     .Result;
         }
 
-        private async Task<CloudflareResult<TResult>> HandleResponse<TResult>(HttpResponseMessage httpResponseMessage) where TResult : ICloudflareEntity
+        public async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity where TMessage : class, ICloudflareEntity
+        {
+            HttpResponseMessage response = await httpClient.PutAsync(uri, payload, jsonMediaTypeFormatter, cancellationToken)
+                .ConfigureAwait(false);
+
+            return (await HandleResponse<TResult>(response)
+                    .ConfigureAwait(false))
+                    .Result;
+        }
+
+        private async Task<CloudflareResult<TResult>> HandleResponse<TResult>(HttpResponseMessage httpResponseMessage) where TResult : class, ICloudflareEntity
         {
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 Debug.WriteLine("Encountered a non-positive http status code {0}", httpResponseMessage.StatusCode);
             }
 
-            var result = await httpResponseMessage.Content.ReadAsAsync<CloudflareResult<TResult>>();
+            CloudflareResult<TResult> result = await httpResponseMessage.Content.ReadAsAsync<CloudflareResult<TResult>>();
             if (result.Errors != null && result.Errors.Count > 0)
             {
                 // we got a negative response back.
@@ -174,15 +169,26 @@
             return result;
         }
 
-        private HttpClient GetClient()
+        protected virtual void Dispose(bool disposing)
         {
-            HttpClient client = httpClientFactory.CreateClient("Cloudflare");
-            client.DefaultRequestHeaders.Add(AuthHeaderKey, apiKey);
-            client.DefaultRequestHeaders.Add(AuthHeaderUsername, username);
-            client.DefaultRequestHeaders.Add(HttpRequestHeader.UserAgent.ToString(), UserAgent);
-            client.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), ApplicationJsonMime);
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    httpClient.Dispose();
+                }
 
-            return client;
+                disposed = true;
+            }
+        }
+
+        /// <summary>
+        /// Implementation of the disposable pattern.
+        /// </summary>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
         }
     }
 }
