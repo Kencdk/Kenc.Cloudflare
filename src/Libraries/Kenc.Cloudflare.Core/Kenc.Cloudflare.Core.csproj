@@ -10,12 +10,20 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Kenc.Cloudflare</PackageId>
     <PackageDescription>.net core library for communicating with Cloudflare API v4.</PackageDescription>
-    <PackageLicenseUrl>https://github.com/Kencdk/Kenc.Cloudflare/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/Kencdk/Kenc.Cloudflare/</PackageProjectUrl>
 
-    <PackageTags>Cloudflare dotnetcore</PackageTags>
-    <Copyright>2019 Ken Christensen</Copyright>
+    <PackageTags>Cloudflare dns</PackageTags>
+    <Copyright>2020 Ken Christensen</Copyright>
     <Description>.net core library for communicating with Cloudflare API.</Description>
+
+    <!-- source link properties -->
+    <RepositoryType>Github</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <RepositoryUrl>https://github.com/Kencdk/Kenc.Cloudflare/</RepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
   
   <ItemGroup>
