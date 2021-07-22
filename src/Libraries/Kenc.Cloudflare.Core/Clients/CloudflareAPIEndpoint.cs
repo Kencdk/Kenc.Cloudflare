@@ -10,6 +10,6 @@
         /// <summary>
         /// Cloudflare API v4 endpoint.
         /// </summary>
-        public readonly static Uri V4Endpoint = new Uri("https://api.cloudflare.com/client/v4/");
+        public readonly static Uri V4Endpoint = new("https://api.cloudflare.com/client/v4/");
     }
 }

@@ -1,10 +1,10 @@
 ﻿namespace Kenc.Cloudflare.Core.Entities
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
 
     public class IdResult : ICloudflareEntity
     {
-        [JsonProperty(propertyName: "id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
     }
 }

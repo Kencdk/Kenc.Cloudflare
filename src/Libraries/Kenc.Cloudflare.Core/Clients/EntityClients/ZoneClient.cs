@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Clients.Enums;
@@ -11,28 +12,26 @@
     using Kenc.Cloudflare.Core.PayloadEntities;
     using Kenc.Cloudflare.Core.Payloads;
 
-    public class ZoneClient : IZoneClient
+    public class ZoneClient : CloudflareEntityClient
     {
         public static readonly string EntityNamePlural = "zones";
 
         private readonly Uri baseUri;
-        private readonly IRestClient restClient;
 
-        public IZoneSettingsClient Settings { get; private set; }
+        public ZoneSettingsClient Settings { get; private set; }
 
-        public IZoneDNSSettingsClient DNSSettings { get; private set; }
+        public ZoneDNSSettingsClient DNSSettings { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ZoneClient"/>
         /// </summary>
-        /// <param name="restClient">Client to use to send requests.</param>
-        public ZoneClient(IRestClient restClient, Uri baseUri)
+        /// <param name="httpClient">Client to use to send requests.</param>
+        public ZoneClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
             this.baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
-            this.restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
 
-            Settings = new ZoneSettingsClient(restClient, baseUri);
-            DNSSettings = new ZoneDNSSettingsClient(restClient, baseUri);
+            Settings = new ZoneSettingsClient(httpClient, baseUri);
+            DNSSettings = new ZoneDNSSettingsClient(httpClient, baseUri);
         }
 
         /// <summary>
@@ -61,7 +60,7 @@
             }
 
             var payload = new CreateZonePayload(name, account);
-            return await restClient.PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken);
+            return await PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken);
         }
 
         /// <summary>
@@ -77,9 +76,21 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
+            return await GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
         }
 
+        /// <summary>
+        /// List zones.
+        /// </summary>
+        /// <param name="domain">Filter to include this domain.</param>
+        /// <param name="status">Filter for status.</param>
+        /// <param name="page">Page (when paging results).</param>
+        /// <param name="perPage">Results per page.</param>
+        /// <param name="order">Sorting order.</param>
+        /// <param name="direction">Sorting direction.</param>
+        /// <param name="match">Match settings.</param>
+        /// <returns><see cref="IList{Zone}"/> of all zones matching the filters.</returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         public async Task<IList<Zone>> ListAsync(string? domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
             var parameters = new List<string>();
@@ -118,19 +129,34 @@
                 parameters.Add($"{nameof(match)}={match.ConvertToString()}");
             }
 
-            var queryString = string.Empty;
-            if (parameters.Any())
-            {
-                queryString = "?" + string.Join('&', parameters);
-            }
+            var queryString = parameters.Any() ? $"?{string.Join('&', parameters)}" : string.Empty;
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}{queryString}");
-            return await restClient.GetAsync<EntityList<Zone>>(uri, cancellationToken);
+            return await GetAsync<EntityList<Zone>>(uri, cancellationToken);
         }
 
-        public Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string>? vanityNameServers = null, string? planId = null, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Patches a zone.
+        /// Only non-null values will be updated.
+        /// https://api.cloudflare.com/#zone-edit-zone
+        /// </summary>
+        /// <param name="identifier">Target zone identifier.</param>
+        /// <param name="paused">Indicates if the zone is only using Cloudflare DNS services. A true value means the zone will not receive security or performance benefits.</param>
+        /// <param name="vanityNameServers">An array of domains used for custom name servers. This is only available for Business and Enterprise plans.</param>
+        /// <param name="planId">The desired plan for the zone. Changing this value will create/cancel associated subscriptions. To view available plans for this zone, see Zone Plans</param>
+        /// <returns>The resulting <see cref="Zone"/> object.</returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
+        public async Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string>? vanityNameServers = null, string? planId = null, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var targetUri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}");
+            var payload = new UpdateZonePayload
+            {
+                Paused = paused,
+                Plan = string.IsNullOrEmpty(planId) ? null : new Plan { Id = planId },
+                VanityNameServers = vanityNameServers?.ToArray()
+            };
+
+            return await PatchAsync<UpdateZonePayload, Zone>(targetUri, payload, cancellationToken);
         }
 
         /// <summary>
@@ -148,7 +174,7 @@
             }
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/activation_check");
-            return await restClient.PutAsync<IdResult>(uri, cancellationToken);
+            return await PutAsync<IdResult>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -168,9 +194,19 @@
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeCachePayload(purgeEverything);
-            return await restClient.PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
+            return await PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
         }
 
+        /// <summary>
+        /// Granularly remove one or more files from Cloudflare's cache either by specifying the host or the associated Cache-Tag.
+        /// </summary>
+        /// <param name="identifier">Target zone identifier.</param>
+        /// <param name="tags">Array of tags to clean/</param>
+        /// <param name="hosts">Array of hosts to clean.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Identifier of the operation as an <see cref="IdResult"/>.</returns>
+        /// <remarks>Enterprise only feature.</remarks>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         public async Task<IdResult> PurgeFilesByTagsOrHosts(string identifier, string[] tags, string[] hosts, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
@@ -185,9 +221,16 @@
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeFilesByTagsOrHostsPayload(tags ?? new string[0], hosts ?? new string[0]);
-            return await restClient.PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
+            return await PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
         }
 
+        /// <summary>
+        /// Attempts to delete a zone identified by <paramref name="identifier"/>
+        /// </summary>
+        /// <param name="identifier">Identifier of the zone to delete.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns><see cref="IdResult"/></returns>
+        /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         public async Task<IdResult> DeleteAsync(string identifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(identifier))
@@ -195,7 +238,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await restClient.DeleteAsync<IdResult>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
+            return await DeleteAsync<IdResult>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
         }
     }
 }

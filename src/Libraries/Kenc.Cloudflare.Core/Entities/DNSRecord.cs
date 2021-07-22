@@ -1,48 +1,48 @@
 ﻿namespace Kenc.Cloudflare.Core.Entities
 {
     using System;
+    using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Clients.Enums;
-    using Newtonsoft.Json;
 
     public class DNSRecord : ICloudflareEntity
     {
-        [JsonProperty(propertyName: "id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "type")]
+        [JsonPropertyName("type")]
         public DNSRecordType Type { get; set; }
 
-        [JsonProperty(propertyName: "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "content")]
+        [JsonPropertyName("content")]
         public string Content { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "proxiable")]
+        [JsonPropertyName("proxiable")]
         public bool Proxiable { get; set; }
 
-        [JsonProperty(propertyName: "proxied")]
+        [JsonPropertyName("proxied")]
         public bool Proxied { get; set; }
 
-        [JsonProperty(propertyName: "ttl")]
+        [JsonPropertyName("ttl")]
         public int TimeToLive { get; set; }
 
-        [JsonProperty(propertyName: "locked")]
+        [JsonPropertyName("locked")]
         public bool Locked { get; set; }
 
-        [JsonProperty(propertyName: "zone_id")]
+        [JsonPropertyName("zone_id")]
         public string ZoneId { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "zone_name")]
+        [JsonPropertyName("zone_name")]
         public string ZoneName { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "created_on")]
+        [JsonPropertyName("created_on")]
         public DateTime CreatedOn { get; set; }
 
-        [JsonProperty(propertyName: "modified_on")]
+        [JsonPropertyName("modified_on")]
         public DateTime? ModifiedOn { get; set; }
 
-        [JsonProperty(propertyName: "data")]
+        [JsonPropertyName("data")]
         public string Data { get; set; } = string.Empty;
     }
 }
