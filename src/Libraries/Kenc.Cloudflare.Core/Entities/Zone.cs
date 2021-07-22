@@ -2,7 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
+    using Kenc.Cloudflare.Core.Clients.Enums;
 
     /// <summary>
     /// Class wrapping zone objects in Cloudflare API
@@ -10,62 +11,62 @@
     /// </summary>
     public class Zone : ICloudflareEntity
     {
-        [JsonProperty(propertyName: "id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
 
         /// <summary>
         /// max length: 253
         /// pattern: ^([a - zA - Z0 - 9][\-a - zA - Z0 - 9]*\.)+[\-a-zA-Z0-9]{2,20}$
         /// </summary>
-        [JsonProperty(propertyName: "name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "development_mode")]
+        [JsonPropertyName("development_mode")]
         public int DevelopmentMode { get; set; }
 
-        [JsonProperty(propertyName: "original_name_servers")]
+        [JsonPropertyName("original_name_servers")]
         public IList<string>? OriginalNameServers { get; set; }
 
-        [JsonProperty(propertyName: "original_registrar")]
+        [JsonPropertyName("original_registrar")]
         public string? OriginalRegistrar { get; set; }
 
-        [JsonProperty(propertyName: "original_dnshost")]
+        [JsonPropertyName("original_dnshost")]
         public string? OriginalDnsHost { get; set; }
 
-        [JsonProperty(propertyName: "created_on")]
+        [JsonPropertyName("created_on")]
         public DateTime? CreatedOn { get; set; }
 
-        [JsonProperty(propertyName: "modified_on")]
+        [JsonPropertyName("modified_on")]
         public DateTime? ModifiedOn { get; set; }
 
-        [JsonProperty(propertyName: "activated_on")]
+        [JsonPropertyName("activated_on")]
         public DateTime? ActivatedOn { get; set; }
 
-        [JsonProperty(propertyName: "owner")]
+        [JsonPropertyName("owner")]
         public ZoneOwner? Owner { get; set; }
 
-        [JsonProperty(propertyName: "Account")]
+        [JsonPropertyName("Account")]
         public Account? Account { get; set; }
 
-        [JsonProperty(propertyName: "permissions")]
+        [JsonPropertyName("permissions")]
         public IList<string>? Permissions { get; set; }
 
-        [JsonProperty(propertyName: "plan")]
+        [JsonPropertyName("plan")]
         public Plan? Plan { get; set; }
 
-        [JsonProperty(propertyName: "plan_pending")]
+        [JsonPropertyName("plan_pending")]
         public Plan? PlanPending { get; set; }
 
-        [JsonProperty(propertyName: "status")]
-        public string Status { get; set; } = string.Empty;
+        [JsonPropertyName("status")]
+        public ZoneStatus Status { get; set; }
 
-        [JsonProperty(propertyName: "paused")]
+        [JsonPropertyName("paused")]
         public bool Paused { get; set; }
 
-        [JsonProperty(propertyName: "type")]
+        [JsonPropertyName("type")]
         public string Type { get; set; } = string.Empty;
 
-        [JsonProperty(propertyName: "name_servers")]
+        [JsonPropertyName("name_servers")]
         public IList<string> NameServers { get; set; } = new List<string>();
     }
 }

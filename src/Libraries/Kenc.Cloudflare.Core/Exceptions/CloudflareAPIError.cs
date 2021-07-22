@@ -1,25 +1,25 @@
 ﻿namespace Kenc.Cloudflare.Core.Exceptions
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
 
     /// <summary>
     /// Wrapper for errors from the Cloudflare REST API.
     /// https://api.cloudflare.com/#getting-started-responses
     /// </summary>
-    public class CloudflareAPIError
+    public class CloudflareApiError
     {
-        [JsonProperty(propertyName: "code")]
+        [JsonPropertyName("code")]
         public string Code { get; private set; }
 
-        [JsonProperty(propertyName: "message")]
+        [JsonPropertyName("message")]
         public string Message { get; private set; }
 
         /// <summary>
-        /// Initializes a new instace of the <see cref="CloudflareAPIError"/> class.
+        /// Initializes a new instace of the <see cref="CloudflareApiError"/> class.
         /// </summary>
         /// <param name="code">Cloudflare API error code.</param>
         /// <param name="message">Cloudflare API error message.</param>
-        public CloudflareAPIError(string code, string message)
+        public CloudflareApiError(string code, string message)
         {
             Code = code;
             Message = message;

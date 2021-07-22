@@ -1,20 +1,20 @@
 ﻿namespace Kenc.Cloudflare.Core.Entities
 {
     using System;
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
 
     public class ZoneSetting : ICloudflareEntity
     {
-        [JsonProperty(propertyName: "id")]
+        [JsonPropertyName("id")]
         public string? Id { get; set; }
 
-        [JsonProperty(propertyName: "value")]
+        [JsonPropertyName("value")]
         public string? Value { get; set; }
 
-        [JsonProperty(propertyName: "editable")]
+        [JsonPropertyName("editable")]
         public bool Editable { get; set; }
 
-        [JsonProperty(propertyName: "modified_on")]
+        [JsonPropertyName("modified_on")]
         public DateTime ModifiedOn { get; set; }
     }
 }

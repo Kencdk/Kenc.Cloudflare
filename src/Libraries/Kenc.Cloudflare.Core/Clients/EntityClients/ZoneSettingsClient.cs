@@ -1,21 +1,23 @@
 ﻿namespace Kenc.Cloudflare.Core.Clients.EntityClients
 {
     using System;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Entities;
 
-    public class ZoneSettingsClient : IZoneSettingsClient
+    /// <summary>
+    /// Client for interacting with Zone Settings, https://api.cloudflare.com/#zone-settings-properties
+    /// </summary>
+    public class ZoneSettingsClient : CloudflareEntityClient
     {
         public static readonly string entityNamePlural = "settings";
 
         private readonly Uri baseUri;
-        private readonly IRestClient restClient;
 
-        public ZoneSettingsClient(IRestClient restClient, Uri baseUri)
+        public ZoneSettingsClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
             this.baseUri = baseUri;
-            this.restClient = restClient;
         }
 
         /// <summary>
@@ -33,7 +35,7 @@
             }
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}");
-            return await restClient.GetAsync<EntityList<ZoneSetting>>(uri, cancellationToken);
+            return await GetAsync<EntityList<ZoneSetting>>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -56,7 +58,7 @@
             }
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}/{name}");
-            return await restClient.GetAsync<ZoneSetting>(uri, cancellationToken);
+            return await GetAsync<ZoneSetting>(uri, cancellationToken);
         }
     }
 }

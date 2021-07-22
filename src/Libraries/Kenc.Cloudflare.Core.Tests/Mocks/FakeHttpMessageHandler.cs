@@ -1,21 +1,36 @@
 ﻿namespace Kenc.Cloudflare.Core.Tests.Mocks
 {
+    using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class FakeHttpMessageHandler : DelegatingHandler
     {
-        private readonly HttpResponseMessage _fakeResponse;
+        private readonly Dictionary<Uri, HttpResponseMessage> results;
 
-        public FakeHttpMessageHandler(HttpResponseMessage responseMessage)
+        public FakeHttpMessageHandler(HttpResponseMessage responseMessage, Uri uri)
         {
-            _fakeResponse = responseMessage;
+            results = new Dictionary<Uri, HttpResponseMessage>()
+            {
+                { uri, responseMessage }
+            };
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        public FakeHttpMessageHandler(Dictionary<Uri, HttpResponseMessage> results)
         {
-            return await Task.FromResult(_fakeResponse);
+            this.results = results;
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            if (results.Remove(request.RequestUri, out HttpResponseMessage responseMessage))
+            {
+                return Task.FromResult(responseMessage);
+            }
+
+            throw new InvalidOperationException($"No response are configured for the requested Uri {request.RequestUri}");
         }
     }
 }

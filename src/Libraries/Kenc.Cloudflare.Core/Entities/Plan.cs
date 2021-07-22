@@ -1,34 +1,34 @@
 ﻿namespace Kenc.Cloudflare.Core.Entities
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
 
     /// <summary>
     /// Class wrapping Plan objects in Cloudflare API
     /// </summary>
     public class Plan
     {
-        [JsonProperty(propertyName: "id")]
+        [JsonPropertyName("id")]
         public string? Id { get; set; }
 
-        [JsonProperty(propertyName: "name")]
+        [JsonPropertyName("name")]
         public string? Name { get; set; }
 
-        [JsonProperty(propertyName: "price")]
+        [JsonPropertyName("price")]
         public int Price { get; set; }
 
-        [JsonProperty(propertyName: "currency")]
+        [JsonPropertyName("currency")]
         public string? Currency { get; set; }
 
-        [JsonProperty(propertyName: "frequency")]
+        [JsonPropertyName("frequency")]
         public string? Fequency { get; set; }
 
-        [JsonProperty(propertyName: "legacy_id")]
+        [JsonPropertyName("legacy_id")]
         public string? LegacyId { get; set; }
 
-        [JsonProperty(propertyName: "is_subscribed")]
+        [JsonPropertyName("is_subscribed")]
         public bool IsSubscribed { get; set; }
 
-        [JsonProperty(propertyName: "can_subscribe")]
+        [JsonPropertyName("can_subscribe")]
         public bool CanSubscribe { get; set; }
     }
 }
