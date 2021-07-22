@@ -1,16 +1,16 @@
 ﻿namespace Kenc.Cloudflare.Core
 {
-    using Newtonsoft.Json;
+    using System.Text.Json.Serialization;
 
     public class ResultInfo
     {
-        [JsonProperty(propertyName: "page")]
-        int Page { get; set; }
+        [JsonPropertyName("page")]
+        public int Page { get; set; }
 
-        [JsonProperty(propertyName: "per_page")]
-        int PerPage { get; set; }
+        [JsonPropertyName("per_page")]
+        public int PerPage { get; set; }
 
-        [JsonProperty(propertyName: "total_count")]
-        int TotalCount { get; set; }
+        [JsonPropertyName("total_count")]
+        public int TotalCount { get; set; }
     }
 }

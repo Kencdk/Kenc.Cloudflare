@@ -1,14 +1,14 @@
 ﻿namespace Kenc.Cloudflare.Core.Payloads
 {
+    using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.PayloadEntities;
-    using Newtonsoft.Json;
 
     public class PurgeFilesByTagsOrHostsPayload : ICloudflarePayload
     {
-        [JsonProperty(propertyName: "tags")]
+        [JsonPropertyName("tags")]
         public string[] Tags { get; }
 
-        [JsonProperty(propertyName: "hosts")]
+        [JsonPropertyName("hosts")]
         public string[] Hosts { get; }
 
         public PurgeFilesByTagsOrHostsPayload(string[] tags, string[] hosts)
