@@ -127,7 +127,7 @@
             return JsonSerializer.Deserialize<T>(json, jsonSerializerOptions);
 #else
 #pragma warning disable CS8603 // Possible null reference return.
-            return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), jsonSerializerOptions);
+            return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
 #pragma warning restore CS8603 // Possible null reference return.
 #endif
         }
