@@ -39,7 +39,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The properties of the user token.</returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
-        public async Task<UserToken> CreateTokenAsync(string name, Policy[] policies, DateTimeOffset? notBefore, DateTimeOffset? expiresOn, UserTokenCondition? conditions = null, CancellationToken cancellationToken = default)
+        public async Task<UserToken> CreateTokenAsync(string name, Policy[] policies, DateTimeOffset? notBefore, DateTimeOffset? expiresOn, UserTokenCondition conditions = null, CancellationToken cancellationToken = default)
         {
             var targetUri = new Uri(baseUri, $"{EntityNamePlural}");
 
@@ -135,7 +135,7 @@
         /// <param name="condition">New conditions.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>The updated token.</returns>
-        public async Task<UserToken> UpdateTokenAsync(string id, DateTimeOffset? expiresOn = null, DateTimeOffset? notBefore = null, string? name = null, Policy[]? policies = null, UserTokenStatus? status = null, UserTokenCondition? condition = null, CancellationToken cancellationToken = default)
+        public async Task<UserToken> UpdateTokenAsync(string id, DateTimeOffset? expiresOn = null, DateTimeOffset? notBefore = null, string name = null, Policy[] policies = null, UserTokenStatus? status = null, UserTokenCondition condition = null, CancellationToken cancellationToken = default)
         {
             var payload = new UpdateUserTokenPayload
             {

@@ -8,15 +8,15 @@
     public class CloudflareResult
     {
         [JsonPropertyName("success")]
-        public bool Success { get; set; } = false;
+        public bool Success { get; set; }
 
         [JsonPropertyName("errors")]
-        public IList<CloudflareApiError>? Errors { get; set; }
+        public IList<CloudflareApiError> Errors { get; set; }
 
         [JsonPropertyName("messages")]
-        public IList<CloudflareApiMessage>? Messages { get; set; }
+        public IList<CloudflareApiMessage> Messages { get; set; }
 
         [JsonPropertyName("result_info")]
-        public ResultInfo? ResultInfo { get; set; }
+        public ResultInfo ResultInfo { get; set; }
     }
 }

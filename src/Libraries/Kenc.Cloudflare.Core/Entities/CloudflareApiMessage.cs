@@ -5,9 +5,9 @@
     public class CloudflareApiMessage
     {
         [JsonPropertyName("code")]
-        public string Code { get; private set; } = string.Empty;
+        public string Code { get; private set; }
 
         [JsonPropertyName("message")]
-        public string Message { get; private set; } = string.Empty;
+        public string Message { get; private set; }
     }
 }

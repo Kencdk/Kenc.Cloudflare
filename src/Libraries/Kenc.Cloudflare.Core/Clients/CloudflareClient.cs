@@ -37,10 +37,6 @@
         public CloudflareClient(IHttpClientFactory httpClientFactory, IOptions<CloudflareClientOptions> options)
         {
             CloudflareClientOptions cloudflareOptions = options.Value ?? throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}");
-            if (cloudflareOptions.Endpoint == null)
-            {
-                throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}.{nameof(options.Value.Endpoint)}");
-            }
             _ = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
             httpClient = httpClientFactory.CreateClient("Cloudflare");
@@ -49,28 +45,8 @@
             var userAgent = $"{client.FullName}/{runtimeVersion.Version} ({RuntimeInformation.OSDescription} {RuntimeInformation.ProcessArchitecture})";
 
             httpClient = httpClientFactory.CreateClient("Cloudflare");
-
-            // are we using ApiKey or UserToken?
-            if (!string.IsNullOrEmpty(cloudflareOptions.UserToken))
-            {
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {cloudflareOptions.UserToken}");
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(cloudflareOptions.ApiKey))
-                {
-                    // must specify either a user token or an API key.
-                    throw new ArgumentNullException($"{ nameof(options) }.{ nameof(options.Value)}.{ nameof(cloudflareOptions.ApiKey)}");
-                }
-                else if (string.IsNullOrEmpty(cloudflareOptions.Username))
-                {
-                    throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}.{nameof(cloudflareOptions.Username)}");
-                }
-
-                httpClient.DefaultRequestHeaders.Add(AuthHeaderKey, cloudflareOptions.ApiKey);
-                httpClient.DefaultRequestHeaders.Add(AuthHeaderUsername, cloudflareOptions.Username);
-            }
-
+            httpClient.DefaultRequestHeaders.Add(AuthHeaderKey, cloudflareOptions.ApiKey);
+            httpClient.DefaultRequestHeaders.Add(AuthHeaderUsername, cloudflareOptions.Username);
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.UserAgent.ToString(), userAgent);
             httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), ApplicationJsonMime);
 
