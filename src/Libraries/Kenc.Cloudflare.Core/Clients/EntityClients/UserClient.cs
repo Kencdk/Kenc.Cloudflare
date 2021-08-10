@@ -25,7 +25,7 @@
         public UserClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
             this.baseUri = baseUri;
-            this.userTokensClient = new UserTokensClient(httpClient, new Uri(baseUri, UserTokensClient.EntityNamePlural));
+            userTokensClient = new UserTokensClient(httpClient, new Uri(baseUri, $"{EntityNameSingular}/"));
         }
 
         public UserTokensClient UserTokenClient => userTokensClient;
