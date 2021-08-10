@@ -36,7 +36,7 @@
         /// <exception cref="ArgumentNullException">Throws when any of the parameters are null or <see cref="string.Empty"/></exception>
         public CloudflareClient(IHttpClientFactory httpClientFactory, IOptions<CloudflareClientOptions> options)
         {
-            CloudflareClientOptions cloudflareOptions = options.Value ?? throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}");
+            var cloudflareOptions = options.Value ?? throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}");
             _ = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
             httpClient = httpClientFactory.CreateClient("Cloudflare");
