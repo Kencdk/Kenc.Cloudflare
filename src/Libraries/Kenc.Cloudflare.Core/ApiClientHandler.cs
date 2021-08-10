@@ -27,7 +27,7 @@
                 request.Content.Headers.ContentType.CharSet = string.Empty;
             }
 
-            var httpResponseMessage = await base.SendAsync(request, cancellationToken);
+            HttpResponseMessage httpResponseMessage = await base.SendAsync(request, cancellationToken);
             if (!httpResponseMessage.IsSuccessStatusCode)
             {
                 Debug.WriteLine("Encountered a non-positive http status code {0}", httpResponseMessage.StatusCode);

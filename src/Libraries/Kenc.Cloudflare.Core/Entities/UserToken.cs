@@ -37,6 +37,9 @@
 
         [JsonPropertyName("condition")]
         public UserTokenCondition Condition { get; set; }
+
+        [JsonPropertyName("value")]
+        public string Value { get; set; }
     }
 
     public class UserTokenCondition
@@ -68,7 +71,6 @@
         [JsonPropertyName("permission_groups")]
         public PermissionGroup[] PermissionGroups { get; set; }
     }
-
 
     public class PermissionGroup
     {

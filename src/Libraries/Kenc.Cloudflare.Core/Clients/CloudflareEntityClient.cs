@@ -2,19 +2,31 @@
 {
     using System;
     using System.Net.Http;
-    using System.Net.Http.Formatting;
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Threading;
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Entities;
+    using Kenc.Cloudflare.Core.JsonConverters;
 
     public abstract class CloudflareEntityClient
     {
-        private readonly HttpClient httpClient;
+        private const string ApplicationJsonMime = "application/json";
 
-        private readonly JsonMediaTypeFormatter jsonMediaTypeFormatter = new() { Indent = true };
+        private readonly HttpClient httpClient;
+        private readonly JsonSerializerOptions jsonSerializerOptions = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            Converters = {
+                new DateTimeConverter(),
+                new DateTimeOffsetConverter(),
+                new NullableDateTimeConverter(),
+                new NullableDateTimeOffsetConverter(),
+                new JsonStringEnumConverter()
+            }
+        };
 
         protected CloudflareEntityClient(HttpClient httpClient)
         {
@@ -28,10 +40,24 @@
         /// <param name="targetUri">Endpoint to target.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="T"/></returns>
-        /// <exception cref="CloudflareException"></exception>
-        protected async Task<T> GetAsync<T>(Uri targetUri, CancellationToken cancellationToken) where T : class, ICloudflareEntity
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        protected async Task<T> GetAsync<T>(Uri targetUri, CancellationToken cancellationToken)
         {
-            var response = await httpClient.GetAsync(targetUri, cancellationToken);
+            HttpResponseMessage response = await httpClient.GetAsync(targetUri, cancellationToken);
+            return (await DeserializeContentAsync<CloudflareResult<T>>(response)).Result;
+        }
+
+        /// <summary>
+        /// Sends a <see cref="HttpRequestMessage"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of expected data to receive.</typeparam>
+        /// <param name="httpRequestMessage">Request to send.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Data returned from the server as <typeparamref name="T"/></returns>
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        protected async Task<T> SendMessage<T>(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
+        {
+            HttpResponseMessage response = await httpClient.SendAsync(httpRequestMessage, cancellationToken);
             return (await DeserializeContentAsync<CloudflareResult<T>>(response)).Result;
         }
 
@@ -44,10 +70,10 @@
         /// <param name="message">Object to send of type <typeparamref name="TMessage"/></param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
-        /// <exception cref="CloudflareException"></exception>
-        protected async Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        protected async Task<TResult> PatchAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default)
         {
-            var strMessage = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
+            StringContent strMessage = SerializeContent(message);
             HttpResponseMessage response = await httpClient.PatchAsync(uri, strMessage, cancellationToken);
 
             return (await DeserializeContentAsync<CloudflareResult<TResult>>(response)).Result;
@@ -62,11 +88,10 @@
         /// <param name="message">Object to send of type <typeparamref name="TMessage"/></param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Data returned from the server as <typeparamref name="TResult"/></returns>
-        /// <exception cref="CloudflareException"></exception>
-        protected async Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
+        /// <exception cref="Exceptions.CloudflareException"></exception>
+        protected async Task<TResult> PostAsync<TMessage, TResult>(Uri uri, TMessage message, CancellationToken cancellationToken = default)
         {
-            // workaround for issue where json content is wrapped in extra characters
-            var strMessage = new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json");
+            StringContent strMessage = SerializeContent(message);
             HttpResponseMessage response = await httpClient.PostAsync(uri, strMessage, cancellationToken);
 
             // workaround for issue where deserialization doesn't take into account special naming (such as zone_id)
@@ -80,27 +105,40 @@
             return (await DeserializeContentAsync<CloudflareResult<TResult>>(response)).Result;
         }
 
-        protected async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity
+        protected async Task<TResult> PutAsync<TResult>(Uri uri, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage response = await httpClient.PutAsync(uri, null, cancellationToken);
-
             return (await DeserializeContentAsync<CloudflareResult<TResult>>(response)).Result;
         }
 
-        protected async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TResult : class, ICloudflareEntity where TMessage : class, ICloudflareEntity
+        protected async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TMessage : class, ICloudflareEntity
         {
-            HttpResponseMessage response = await httpClient.PutAsync(uri, payload, jsonMediaTypeFormatter, cancellationToken);
+            StringContent strMessage = SerializeContent(payload);
+            HttpResponseMessage response = await httpClient.PutAsync(uri, strMessage, cancellationToken);
+
             return (await DeserializeContentAsync<CloudflareResult<TResult>>(response)).Result;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static async Task<T> DeserializeContentAsync<T>(HttpResponseMessage response)
+        private async Task<T> DeserializeContentAsync<T>(HttpResponseMessage response)
         {
 #if DEBUG
             var json = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json, jsonSerializerOptions);
 #else
             return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync());
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected StringContent SerializeContent<T>(T message)
+        {
+#if DEBUG
+            var str = JsonSerializer.Serialize(message, typeof(T), jsonSerializerOptions);
+            return new StringContent(str, Encoding.UTF8, ApplicationJsonMime);
+#else
+            // workaround for issue where json content is wrapped in extra characters
+            return new StringContent(JsonSerializer.Serialize(payload, jsonSerializerOptions), Encoding.UTF8, ApplicationJsonMime);
 #endif
         }
     }

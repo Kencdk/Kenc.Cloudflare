@@ -3,16 +3,12 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Clients;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
     [TestCategory("IntegrationTests")]
-    public class DNSScenarioTests
+    public class DNSScenarioTests : IntegrationTestBase
     {
-        public TestContext TestContext { get; set; }
-
         [TestMethod]
         public async Task GetDomain()
         {
@@ -49,36 +45,6 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
 
             // delete the record again
             await client.Zones.DNSSettings.DeleteRecordAsync(record);
-        }
-
-        private ICloudflareClient CreateClient()
-        {
-            var myConfiguration = new Dictionary<string, string>
-            {
-                { "ApiKey", TestContextSetting("cloudflareapikey") },
-                { "Username", TestContextSetting("cloudflareusername")},
-                { "Endpoint", CloudflareAPIEndpoint.V4Endpoint.ToString() }
-            };
-
-            var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(myConfiguration)
-                .Build();
-
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddHttpClient();
-            serviceCollection.AddCloudflareClient(configuration);
-            var services = serviceCollection.BuildServiceProvider();
-            return services.GetRequiredService<ICloudflareClient>();
-        }
-
-        private string TestContextSetting(string name)
-        {
-            if (TestContext.Properties.Contains(name))
-            {
-                return (string)TestContext.Properties[name];
-            }
-
-            return System.Environment.GetEnvironmentVariable(name);
         }
     }
 }
