@@ -8,8 +8,18 @@ Free and open implementation of the Cloudflare API prtocol v4 in C# .net core, a
 
 # Getting Started #
 Install the [Nuget] package.
-Register with dependency injection
 
+
+Add configuration:
+````JSON
+{
+  "ApiKey": "<your api key here>",
+  "Username": "email@host.test",
+  "Endpoint": "https://api.cloudflare.test/client/v4/"
+}
+````
+
+Register with dependency injection:
 ````C#
 serviceCollection.AddHttpClient();
 serviceCollection.AddCloudflareClient(configuration);
