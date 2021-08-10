@@ -138,7 +138,7 @@
             return new StringContent(str, Encoding.UTF8, ApplicationJsonMime);
 #else
             // workaround for issue where json content is wrapped in extra characters
-            return new StringContent(JsonSerializer.Serialize(payload, jsonSerializerOptions), Encoding.UTF8, ApplicationJsonMime);
+            return new StringContent(JsonSerializer.Serialize(message, jsonSerializerOptions), Encoding.UTF8, ApplicationJsonMime);
 #endif
         }
     }
