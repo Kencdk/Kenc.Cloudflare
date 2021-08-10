@@ -1,14 +1,14 @@
 ﻿namespace Kenc.Cloudflare.Core.PayloadEntities
 {
-    using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Entities;
+    using Newtonsoft.Json;
 
     public class CreateZonePayload : ICloudflarePayload
     {
-        [JsonPropertyName("name")]
+        [JsonProperty(propertyName: "name")]
         public string Name { get; }
 
-        [JsonPropertyName("account")]
+        [JsonProperty(propertyName: "account")]
         public Account Account { get; }
 
         public CreateZonePayload(string name, Account account)

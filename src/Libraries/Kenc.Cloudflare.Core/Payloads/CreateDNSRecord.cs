@@ -1,27 +1,27 @@
 ﻿namespace Kenc.Cloudflare.Core.Payloads
 {
-    using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.PayloadEntities;
+    using Newtonsoft.Json;
 
     public class CreateDNSRecord : ICloudflarePayload
     {
-        [JsonPropertyName("name")]
+        [JsonProperty(propertyName: "name")]
         public string Name { get; }
 
-        [JsonPropertyName("type")]
+        [JsonProperty(propertyName: "type")]
         public DNSRecordType Type { get; }
 
-        [JsonPropertyName("content")]
+        [JsonProperty(propertyName: "content")]
         public string Content { get; }
 
-        [JsonPropertyName("ttl")]
+        [JsonProperty(propertyName: "ttl")]
         public int? TimeToLive { get; }
 
-        [JsonPropertyName("priority")]
+        [JsonProperty(propertyName: "priority")]
         public int? Priority { get; }
 
-        [JsonPropertyName("proxied")]
+        [JsonProperty(propertyName: "proxied")]
         public bool? Proxied { get; }
 
         public CreateDNSRecord(string name, DNSRecordType type, string content, int? ttl, int? priority, bool? proxied)

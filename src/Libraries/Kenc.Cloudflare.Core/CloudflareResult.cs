@@ -1,21 +1,25 @@
 ﻿namespace Kenc.Cloudflare.Core
 {
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
+    using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.Exceptions;
+    using Newtonsoft.Json;
 
-    public class CloudflareResult
+    public class CloudflareResult<T> where T : class, ICloudflareEntity
     {
-        [JsonPropertyName("success")]
+        [JsonProperty(propertyName: "result")]
+        public T Result { get; set; }
+
+        [JsonProperty(propertyName: "success")]
         public bool Success { get; set; }
 
-        [JsonPropertyName("errors")]
-        public IList<CloudflareApiError> Errors { get; set; }
+        [JsonProperty(propertyName: "errors")]
+        public IList<CloudflareAPIError> Errors { get; set; }
 
-        [JsonPropertyName("messages")]
+        [JsonProperty(propertyName: "messages")]
         public IList<string> Messages { get; set; }
 
-        [JsonPropertyName("result_info")]
+        [JsonProperty(propertyName: "result_info")]
         public ResultInfo ResultInfo { get; set; }
     }
 }

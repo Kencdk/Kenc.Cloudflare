@@ -11,18 +11,18 @@
         /// Gets a client for interacting with Zones.
         /// https://api.cloudflare.com/#zone-properties
         /// </summary>
-        ZoneClient Zones { get; }
+        IZoneClient Zones { get; }
 
         /// <summary>
         /// Gets a client for interacting with the currently signed in user.
         /// https://api.cloudflare.com/#user-properties
         /// </summary>
-        UserClient UserClient { get; }
+        IUserClient UserClient { get; }
 
         /// <summary>
         /// Gets a client for interacting with a Zones DNS settings.
         /// https://api.cloudflare.com/#zone-settings-get-all-zone-settings
         /// </summary>
-        ZoneDNSSettingsClient ZoneDNSSettingsClient { get; }
+        IZoneDNSSettingsClient ZoneDNSSettingsClient { get; }
     }
 }

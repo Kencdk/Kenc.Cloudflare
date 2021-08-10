@@ -1,16 +1,16 @@
 ﻿namespace Kenc.Cloudflare.Core.Entities
 {
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
 
     public class ZoneOwner
     {
-        [JsonPropertyName("id")]
+        [JsonProperty(propertyName: "id")]
         public string? Id { get; set; }
 
-        [JsonPropertyName("name")]
+        [JsonProperty(propertyName: "name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("type")]
+        [JsonProperty(propertyName: "type")]
         public string? Type { get; set; }
     }
 }

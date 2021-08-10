@@ -1,9 +1,10 @@
 ﻿namespace Kenc.Cloudflare.Core.Clients.Enums
 {
     using System.Runtime.Serialization;
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum DNSRecordType
     {
         A, AAAA, CNAME, TXT, SRV, LOC, MX, NS, SPF, CERT, DNSKEY, DS, NAPTR, SMIMEA, SSHFP, TLSA,

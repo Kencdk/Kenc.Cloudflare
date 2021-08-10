@@ -1,6 +1,6 @@
 ﻿namespace Kenc.Cloudflare.Core.Entities
 {
-    using System.Text.Json.Serialization;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Class wrapping Account objects in Cloudflare API
@@ -8,13 +8,13 @@
     /// </summary>
     public class Account : ICloudflareEntity
     {
-        [JsonPropertyName("id")]
+        [JsonProperty(propertyName: "id")]
         public string Id { get; set; } = string.Empty;
 
-        [JsonPropertyName("name")]
+        [JsonProperty(propertyName: "name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonPropertyName("settings")]
+        [JsonProperty(propertyName: "settings")]
         public AccountSettings Settings { get; set; } = new AccountSettings();
     }
 }

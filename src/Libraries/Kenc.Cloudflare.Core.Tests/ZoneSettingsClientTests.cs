@@ -2,14 +2,14 @@ namespace Kenc.Cloudflare.Core.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Net.Http;
+    using System.Threading;
     using System.Threading.Tasks;
-    using FluentAssertions;
+    using Kenc.Cloudflare.Core.Clients;
     using Kenc.Cloudflare.Core.Clients.EntityClients;
     using Kenc.Cloudflare.Core.Entities;
-    using Kenc.Cloudflare.Core.Tests.Helpers;
-    using Kenc.Cloudflare.Core.Tests.Mocks;
+    using Kenc.Cloudflare.Core.Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
 
     [TestClass]
     public class ZoneSettingsClientTests
@@ -19,13 +19,34 @@ namespace Kenc.Cloudflare.Core.Tests
         [TestMethod]
         public async Task ZoneClient_GetCallsRestClient()
         {
-            var zoneSetting = new ZoneSetting { };
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
-            var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings/setting"));
-            var httpClient = new HttpClient(mesageHandler);
+            var zone = new ZoneSetting { };
+            var restClient = new Mock<IRestClient>();
+            restClient.Setup(x => x.GetAsync<ZoneSetting>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.GetAsync(zoneIdentifier, "setting");
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            var result = await zoneClient.GetAsync(zoneIdentifier, "setting");
+
+            // assert
+            Assert.AreSame(zone, result, "The returned zone object should have been passed through");
+            restClient.Verify(x => x.GetAsync<ZoneSetting>(
+                    It.Is<Uri>(y => y.PathAndQuery == $"/client/v4/zones/{zoneIdentifier}/settings/setting"),
+                    It.IsAny<CancellationToken>()),
+                Times.Once, "Get should have been called on the REST client.");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(CloudflareException))]
+        public async Task ZoneClient_GetDoesntSwallowExceptions()
+        {
+            var restClient = new Mock<IRestClient>();
+            restClient.Setup(x => x.GetAsync<ZoneSetting>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new CloudflareException(new List<CloudflareAPIError> {
+                    new CloudflareAPIError("1049", "<domain> is not a registered domain")
+                }));
+
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            var result = await zoneClient.GetAsync(zoneIdentifier, "setting");
         }
 
         [DataTestMethod]
@@ -33,41 +54,56 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("", "name")]
         [DataRow("name", null)]
         [DataRow("name", "")]
-        public void ZoneClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
-            var apiClientHandler = new ApiClientHandler(messageHandler);
-            var httpClient = new HttpClient(apiClientHandler);
-
-            var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.GetAsync(identifier, name);
-            act.Should().Throw<ArgumentNullException>();
+            var restClient = new Mock<IRestClient>();
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            _ = await zoneClient.GetAsync(identifier, name);
         }
 
         [TestMethod]
         public async Task ZoneClient_ListCallsRestClient()
         {
             var zone = new EntityList<ZoneSetting>();
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
-            var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings"));
-            var httpClient = new HttpClient(mesageHandler);
+            var restClient = new Mock<IRestClient>();
+            restClient.Setup(x => x.GetAsync<EntityList<ZoneSetting>>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(zone);
 
-            var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.ListAsync(zoneIdentifier);
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            var result = await zoneClient.ListAsync(zoneIdentifier);
+
+            // assert
+            Assert.AreSame(zone, result, "The returned zone object should have been passed through");
+            restClient.Verify(x => x.GetAsync<EntityList<ZoneSetting>>(
+                    It.Is<Uri>(y => y.PathAndQuery == $"/client/v4/zones/{zoneIdentifier}/settings"),
+                    It.IsAny<CancellationToken>()),
+                Times.Once, "Get should have been called on the REST client.");
         }
 
         [DataRow("")]
         [DataRow(null)]
         [DataTestMethod]
-        public void ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
-            var apiClientHandler = new ApiClientHandler(messageHandler);
-            var httpClient = new HttpClient(apiClientHandler);
+            var restClient = new Mock<IRestClient>();
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            _ = await zoneClient.ListAsync(identifier);
+        }
 
-            var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.ListAsync(identifier);
-            act.Should().Throw<ArgumentNullException>();
+        [TestMethod]
+        [ExpectedException(typeof(CloudflareException))]
+        public async Task ZoneClient_ListDoesntSwallowExceptions()
+        {
+            var restClient = new Mock<IRestClient>();
+            restClient.Setup(x => x.GetAsync<EntityList<ZoneSetting>>(It.IsAny<Uri>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new CloudflareException(new List<CloudflareAPIError> {
+                    new CloudflareAPIError("1049", "<domain> is not a registered domain")
+                }));
+
+            var zoneClient = new ZoneSettingsClient(restClient.Object, CloudflareAPIEndpoint.V4Endpoint);
+            var result = await zoneClient.ListAsync(zoneIdentifier);
         }
     }
 }

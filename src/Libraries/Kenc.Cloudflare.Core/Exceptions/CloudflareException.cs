@@ -10,15 +10,15 @@
     public class CloudflareException : Exception
     {
         /// <summary>
-        /// Gets a list of <see cref="CloudflareApiError"/> returned from the API.
+        /// Gets a list of <see cref="CloudflareAPIError"/> returned from the API.
         /// </summary>
-        public IList<CloudflareApiError> Errors { get; private set; }
+        public IList<CloudflareAPIError> Errors { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CloudflareException"/> class.
         /// </summary>
         /// <param name="errors">List of errors returned by the Cloudflare API.</param>
-        public CloudflareException(IList<CloudflareApiError> errors) : base()
+        public CloudflareException(IList<CloudflareAPIError> errors) : base()
         {
             Errors = errors;
         }
@@ -26,7 +26,7 @@
         public override string ToString()
         {
             var stringBuilder = new StringBuilder();
-            foreach (CloudflareApiError error in Errors)
+            foreach (CloudflareAPIError error in Errors)
             {
                 stringBuilder.AppendLine($"{error.Code}: {error.Message}");
             }
