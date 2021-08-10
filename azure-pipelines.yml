@@ -7,8 +7,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-   major: 1
-   minor: 0
+   major: 0
+   minor: 1
    beta: true
    solution: '**/*.sln'
    buildConfiguration: 'Release'
