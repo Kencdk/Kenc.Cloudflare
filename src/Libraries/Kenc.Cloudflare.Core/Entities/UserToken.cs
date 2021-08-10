@@ -12,10 +12,10 @@
     public class UserToken : ICloudflareEntity
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("status")]
         public UserTokenStatus Status { get; set; }
@@ -33,52 +33,52 @@
         public DateTimeOffset? ExpiresOn { get; set; }
 
         [JsonPropertyName("policies")]
-        public Policy[] Policies { get; set; }
+        public Policy[]? Policies { get; set; }
 
         [JsonPropertyName("condition")]
-        public UserTokenCondition Condition { get; set; }
+        public UserTokenCondition? Condition { get; set; }
 
         [JsonPropertyName("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 
     public class UserTokenCondition
     {
         [JsonPropertyName("requestip")]
-        public UserTokenRequestIPRules Requestip { get; set; }
+        public UserTokenRequestIPRules? Requestip { get; set; }
     }
 
     public class UserTokenRequestIPRules
     {
         [JsonPropertyName("in")]
-        public string[] In { get; set; }
+        public string[]? In { get; set; }
 
         [JsonPropertyName("not_in")]
-        public string[] NotIn { get; set; }
+        public string[]? NotIn { get; set; }
     }
 
     public class Policy
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonPropertyName("effect")]
-        public string Effect { get; set; }
+        public string? Effect { get; set; }
 
         [JsonPropertyName("resources")]
-        public Dictionary<string, string> Resources { get; set; }
+        public Dictionary<string, string>? Resources { get; set; }
 
         [JsonPropertyName("permission_groups")]
-        public PermissionGroup[] PermissionGroups { get; set; }
+        public PermissionGroup[]? PermissionGroups { get; set; }
     }
 
     public class PermissionGroup
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     public enum UserTokenStatus

@@ -7,16 +7,21 @@
         /// <summary>
         /// Api Key to use with Cloudflare client.
         /// </summary>
-        public string ApiKey { get; set; }
+        public string? ApiKey { get; set; }
 
         /// <summary>
         /// Username for cloudflare client.
         /// </summary>
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         /// <summary>
         /// Api endpoint to use with Cloudflare client.
         /// </summary>
-        public Uri Endpoint { get; set; }
+        public Uri? Endpoint { get; set; }
+
+        /// <summary>
+        /// User token to use instead of API key / username pair.
+        /// </summary>
+        public string? UserToken { get; set; }
     }
 }
