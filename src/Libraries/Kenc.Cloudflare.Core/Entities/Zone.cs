@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
+    using Kenc.Cloudflare.Core.Clients.Enums;
 
     /// <summary>
     /// Class wrapping zone objects in Cloudflare API
@@ -57,7 +58,7 @@
         public Plan? PlanPending { get; set; }
 
         [JsonPropertyName("status")]
-        public string Status { get; set; } = string.Empty;
+        public ZoneStatus Status { get; set; }
 
         [JsonPropertyName("paused")]
         public bool Paused { get; set; }
