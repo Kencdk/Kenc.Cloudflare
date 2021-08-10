@@ -1,5 +1,5 @@
 # Kenc.Cloudflare
-![Build Status](https://dev.azure.com/kenc/Cloudflare/_apis/build/status/Kencdk.Kenc.Cloudflare?branchName=main)
+![Build status](https://kenc.visualstudio.com/Cloudflare/_apis/build/status/Cloudflare%20CI-CD)
 [![Feature Requests](https://img.shields.io/github/issues/Kencdk/Kenc.Cloudflare/feature-request.svg)](https://github.com/Kencdk/Kenc.Cloudflare/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
 [![Bugs](https://img.shields.io/github/issues/Kencdk/Kenc.Cloudflare/bug.svg)](https://github.com/Kencdk/Kenc.Cloudflare/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Abug)
 [![NuGet](https://img.shields.io/nuget/v/Kenc.Cloudflare.svg)](NuGet)
