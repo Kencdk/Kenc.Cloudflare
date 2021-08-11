@@ -3,11 +3,8 @@
     using System;
     using System.Text.Json.Serialization;
 
-    public class ZoneSetting : ICloudflareEntity
+    public class ZoneSetting : CloudflareBaseEntity
     {
-        [JsonPropertyName("id")]
-        public string? Id { get; set; }
-
         [JsonPropertyName("value")]
         public string? Value { get; set; }
 

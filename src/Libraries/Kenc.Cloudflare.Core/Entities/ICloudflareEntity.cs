@@ -2,5 +2,6 @@
 {
     public interface ICloudflareEntity
     {
+        static string EntityNamePlural { get; } = "";
     }
 }

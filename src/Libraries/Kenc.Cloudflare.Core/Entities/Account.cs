@@ -6,11 +6,8 @@
     /// Class wrapping Account objects in Cloudflare API
     /// https://api.cloudflare.com/#accounts-properties
     /// </summary>
-    public class Account : ICloudflareEntity
+    public class Account : CloudflareBaseEntity
     {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 

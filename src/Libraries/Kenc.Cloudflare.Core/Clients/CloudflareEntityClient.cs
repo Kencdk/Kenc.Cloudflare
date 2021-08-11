@@ -10,6 +10,7 @@
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.JsonConverters;
+    using Kenc.Cloudflare.Core.Payloads;
 
     public abstract class CloudflareEntityClient
     {
@@ -111,7 +112,7 @@
             return (await DeserializeContentAsync<CloudflareResult<TResult>>(response)).Result;
         }
 
-        protected async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TMessage : class, ICloudflareEntity
+        protected async Task<TResult> PutAsync<TMessage, TResult>(Uri uri, TMessage payload, CancellationToken cancellationToken = default) where TMessage : class, ICloudflarePayload
         {
             StringContent strMessage = SerializeContent(payload);
             HttpResponseMessage response = await httpClient.PutAsync(uri, strMessage, cancellationToken);

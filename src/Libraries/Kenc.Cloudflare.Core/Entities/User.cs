@@ -7,11 +7,8 @@
     /// Class wrapping user objects in Cloudflare API
     /// https://api.cloudflare.com/#user-properties
     /// </summary>
-    public class User : ICloudflareEntity
+    public class User : CloudflareBaseEntity
     {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-
         [JsonPropertyName("email")]
         public string Email { get; set; } = string.Empty;
 

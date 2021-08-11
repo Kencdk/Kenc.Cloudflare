@@ -9,7 +9,6 @@
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.Helpers;
-    using Kenc.Cloudflare.Core.PayloadEntities;
     using Kenc.Cloudflare.Core.Payloads;
 
     public class ZoneClient : CloudflareEntityClient
@@ -47,6 +46,11 @@
             if (string.IsNullOrEmpty(name))
             {
                 throw new ArgumentNullException(nameof(name));
+            }
+
+            if (account == null)
+            {
+                throw new ArgumentNullException(nameof(account));
             }
 
             if (string.IsNullOrEmpty(account.Name))
@@ -89,9 +93,9 @@
         /// <param name="order">Sorting order.</param>
         /// <param name="direction">Sorting direction.</param>
         /// <param name="match">Match settings.</param>
-        /// <returns><see cref="IList{Zone}"/> of all zones matching the filters.</returns>
+        /// <returns><see cref="IReadOnlyList{Zone}"/> of all zones matching the filters.</returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<IList<Zone>> ListAsync(string? domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<Zone>> ListAsync(string? domain = null, ZoneStatus? status = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
             var parameters = new List<string>();
             if (!string.IsNullOrEmpty(domain))

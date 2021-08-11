@@ -9,11 +9,8 @@
     /// Class wrapping zone objects in Cloudflare API
     /// https://api.cloudflare.com/#zone-properties
     /// </summary>
-    public class Zone : ICloudflareEntity
+    public class Zone : CloudflareBaseEntity
     {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-
         /// <summary>
         /// max length: 253
         /// pattern: ^([a - zA - Z0 - 9][\-a - zA - Z0 - 9]*\.)+[\-a-zA-Z0-9]{2,20}$

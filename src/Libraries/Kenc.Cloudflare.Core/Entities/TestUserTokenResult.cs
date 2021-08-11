@@ -3,11 +3,8 @@
     using System;
     using System.Text.Json.Serialization;
 
-    public class TestUserTokenResult : ICloudflareEntity
+    public class TestUserTokenResult : CloudflareBaseEntity
     {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-
         [JsonPropertyName("status")]
         public UserTokenStatus Status { get; set; }
 

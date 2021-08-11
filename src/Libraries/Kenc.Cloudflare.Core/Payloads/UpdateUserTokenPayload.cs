@@ -4,7 +4,7 @@
     using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Entities;
 
-    public class UpdateUserTokenPayload : ICloudflareEntity
+    public class UpdateUserTokenPayload : ICloudflarePayload
     {
         [JsonPropertyName("name")]
         public string? Name { get; set; }

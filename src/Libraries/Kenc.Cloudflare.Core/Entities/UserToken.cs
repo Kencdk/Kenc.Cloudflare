@@ -9,11 +9,8 @@
     /// Class wrapping user api token objects in Cloudflare API
     /// https://api.cloudflare.com/#user-api-tokens-list-tokens
     /// </summary>
-    public class UserToken : ICloudflareEntity
+    public class UserToken : CloudflareBaseEntity
     {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
-
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
