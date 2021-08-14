@@ -20,11 +20,13 @@
 
         private readonly HttpClient httpClient;
 
+        public AccountClient Accounts { get; private set; }
+
         public ZoneClient Zones { get; private set; }
 
         public UserClient UserClient { get; private set; }
 
-        public ZoneDNSSettingsClient ZoneDNSSettingsClient { get; private set; }
+        public ZoneDnsRecordsClient ZoneDNSSettingsClient { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CloudflareClient"/> class.
@@ -76,7 +78,8 @@
 
             Zones = new ZoneClient(httpClient, cloudflareOptions.Endpoint);
             UserClient = new UserClient(httpClient, cloudflareOptions.Endpoint);
-            ZoneDNSSettingsClient = new ZoneDNSSettingsClient(httpClient, cloudflareOptions.Endpoint);
+            ZoneDNSSettingsClient = new ZoneDnsRecordsClient(httpClient, cloudflareOptions.Endpoint);
+            Accounts = new AccountClient(httpClient, cloudflareOptions.Endpoint);
         }
     }
 }

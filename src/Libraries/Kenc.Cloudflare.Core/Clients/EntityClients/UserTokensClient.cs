@@ -92,7 +92,7 @@
         public async Task<IReadOnlyList<UserToken>> ListTokensAsync(int page = 1, int perPage = 20, Direction direction = Direction.Asc, CancellationToken cancellationToken = default)
         {
             var uri = new Uri(baseUri, $"{EntityNamePlural}?page={page}&per_page={perPage}&direction={direction.ConvertToString()}");
-            return await GetAsync<EntityList<UserToken>>(uri, cancellationToken);
+            return await GetAsync<IReadOnlyList<UserToken>>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@
             };
 
             var targetUri = new Uri(baseUri, $"{EntityNamePlural}/{id}");
-            return await PutAsync<UpdateUserTokenPayload, UserToken>(targetUri, payload, cancellationToken);
+            return await PutAsync<UserToken, UpdateUserTokenPayload>(targetUri, payload, cancellationToken);
         }
     }
 }

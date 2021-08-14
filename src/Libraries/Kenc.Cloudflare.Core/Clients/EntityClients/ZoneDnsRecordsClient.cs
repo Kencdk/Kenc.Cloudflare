@@ -8,16 +8,16 @@
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
-    using Kenc.Cloudflare.Core.Helpers;
+    using Kenc.Cloudflare.Core.Entities.DnsRecords;
     using Kenc.Cloudflare.Core.Payloads;
 
     /// <summary>
     /// Implementation of <see cref="IZoneDNSSettingsClient"/>.
     /// </summary>
     /// <inheritdoc/>
-    public class ZoneDNSSettingsClient : CloudflareEntityClient
+    public class ZoneDnsRecordsClient : CloudflareEntityClient
     {
-        public static readonly string EntityNamePlural = "dns_records";
+        private const string EntityNamePlural = "dns_records";
 
         private readonly Uri baseUri;
 
@@ -25,7 +25,7 @@
         /// Initializes a new instance of the <see cref="ZoneClient"/> class.
         /// </summary>
         /// <param name="httpClient">Client to use to send requests.</param>
-        public ZoneDNSSettingsClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
+        public ZoneDnsRecordsClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
             this.baseUri = baseUri;
         }
@@ -41,9 +41,9 @@
         /// <param name="priority">Priority</param>
         /// <param name="proxied">Wether traffic is proxied.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="DNSRecord"/></returns>
+        /// <returns><see cref="DnsRecord"/></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<DNSRecord> CreateRecordAsync(string zoneIdentifier, string name, DNSRecordType type, string content, int? ttl = null, int? priority = null, bool? proxied = null, CancellationToken cancellationToken = default)
+        public async Task<DnsRecord> CreateRecordAsync(string zoneIdentifier, string name, DnsRecordType type, string content, int? ttl = null, int? priority = null, bool? proxied = null, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
             {
@@ -60,8 +60,8 @@
                 throw new ArgumentNullException(nameof(content));
             }
 
-            var payload = new CreateDNSRecord(name, type, content, ttl, priority, proxied);
-            return await PostAsync<CreateDNSRecord, DNSRecord>(new Uri(baseUri, $"zones/{zoneIdentifier}/{EntityNamePlural}"), payload, cancellationToken);
+            var payload = new CreateDnsRecordPayload(name, type, content, ttl, priority, proxied);
+            return await PostAsync<DnsRecord, CreateDnsRecordPayload>(new Uri(baseUri, $"zones/{zoneIdentifier}/{EntityNamePlural}"), payload, cancellationToken);
         }
 
         /// <summary>
@@ -70,9 +70,9 @@
         /// <param name="zoneIdentifier">Target zone identifier.</param>
         /// <param name="name">Target dns setting name.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="DNSRecord"/></returns>
+        /// <returns><see cref="DnsRecord"/></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<DNSRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default)
+        public async Task<DnsRecord> GetAsync(string zoneIdentifier, string name, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
             {
@@ -85,7 +85,7 @@
             }
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{EntityNamePlural}/{name}");
-            return await GetAsync<DNSRecord>(uri, cancellationToken);
+            return await GetAsync<DnsRecord>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -101,59 +101,42 @@
         /// <param name="direction">Direction to order domains.</param>
         /// <param name="match">Whether to match all search requirements or at least one (any).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="EntityList{DNSRecord}" /></returns>
+        /// <returns><see cref="IReadOnlyList{DnsRecord}" /></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<EntityList<DNSRecord>> ListAsync(string zoneIdentifier, DNSRecordType? type = null, string? name = null, string? content = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<DnsRecord>> ListAsync(string zoneIdentifier, DnsRecordType? type = null, string? name = null, bool? proxied = null, string? content = null, int? page = null, int? perPage = null, string? order = null, Direction? direction = null, Match? match = null, CancellationToken cancellationToken = default)
         {
-            var parameters = new List<string>();
-            if (type.HasValue)
+            var filter = new DnsRecordListFilter
             {
-                parameters.Add($"{nameof(type)}={type.ConvertToString()}");
-            }
+                Content = content,
+                Direction = direction,
+                Name = name,
+                Page = page,
+                PerPage = perPage,
+                Proxied = proxied,
+                Type = type,
+                Match = match,
+                Order = order
+            };
 
-            if (!string.IsNullOrEmpty(name))
-            {
-                parameters.Add($"{nameof(name)}={name}");
-            }
+            return await ListAsync(zoneIdentifier, filter);
+        }
 
-            if (!string.IsNullOrEmpty(content))
+        public async Task<IReadOnlyList<DnsRecord>> ListAsync(string zoneIdentifier, DnsRecordListFilter filter, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(zoneIdentifier))
             {
-                parameters.Add($"{nameof(content)}={content}");
-            }
-
-            if (page.HasValue)
-            {
-                parameters.Add($"{nameof(page)}={page}");
-            }
-
-            if (perPage.HasValue)
-            {
-                parameters.Add($"per_page={perPage}");
-            }
-
-            if (!string.IsNullOrEmpty(order))
-            {
-                parameters.Add($"{nameof(order)}={order}");
-            }
-
-            if (direction.HasValue)
-            {
-                parameters.Add($"{nameof(direction)}={direction.ConvertToString()}");
-            }
-
-            if (match.HasValue)
-            {
-                parameters.Add($"{nameof(match)}={match.ConvertToString()}");
+                throw new ArgumentNullException(nameof(zoneIdentifier));
             }
 
             var queryString = string.Empty;
+            IReadOnlyList<string>? parameters = filter.GenerateParameters();
             if (parameters.Any())
             {
-                queryString = "?" + string.Join('&', parameters);
+                queryString = $"?{string.Join('&', parameters)}";
             }
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{EntityNamePlural}{queryString}");
-            return await GetAsync<EntityList<DNSRecord>>(uri, cancellationToken);
+            return await GetAsync<IReadOnlyList<DnsRecord>>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -167,9 +150,9 @@
         /// <param name="ttl">Time to live.</param>
         /// <param name="proxied">Wether the connection should be proxied.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="DNSRecord"/></returns>
+        /// <returns><see cref="DnsRecord"/></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<DNSRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType type, string content, int ttl, bool proxied, CancellationToken cancellationToken = default)
+        public async Task<DnsRecord> UpdateRecordAsync(string recordId, string zoneIdentififer, string name, DnsRecordType type, string content, int ttl, bool proxied, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentififer))
             {
@@ -186,9 +169,9 @@
                 throw new ArgumentNullException(nameof(content));
             }
 
-            var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
+            var payload = new UpdateDnsRecordPayload(name, type, content, ttl, proxied);
             var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");
-            return await PutAsync<UpdateDNSRecord, DNSRecord>(uri, payload, cancellationToken);
+            return await PutAsync<DnsRecord, UpdateDnsRecordPayload>(uri, payload, cancellationToken);
         }
 
         /// <summary>
@@ -196,9 +179,9 @@
         /// </summary>
         /// <param name="dnsRecord">Dns record object.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns><see cref="DNSRecord"/></returns>
+        /// <returns><see cref="DnsRecord"/></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public Task<DNSRecord> UpdateRecordAsync(DNSRecord dnsRecord, CancellationToken cancellationToken = default)
+        public Task<DnsRecord> UpdateRecordAsync(DnsRecord dnsRecord, CancellationToken cancellationToken = default)
         {
             return UpdateRecordAsync(dnsRecord.Id, dnsRecord.ZoneId, dnsRecord.Name, dnsRecord.Type, dnsRecord.Content, dnsRecord.TimeToLive, dnsRecord.Proxied, cancellationToken);
         }
@@ -215,17 +198,17 @@
         /// <param name="ttl">Time to live, optional. Will update the record if specified.</param>
         /// <param name="proxied">Wether the connection should be proxied, optional. Will update the record if specified.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
-        /// <returns><see cref="DNSRecord"/></returns>
+        /// <returns><see cref="DnsRecord"/></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<DNSRecord> PatchDNSRecordAsync(string recordId, string zoneIdentififer, string name, DNSRecordType? type, string? content, int? ttl, bool? proxied, CancellationToken cancellationToken = default)
+        public async Task<DnsRecord> PatchDnsRecord(string recordId, string zoneIdentififer, string name, DnsRecordType? type, string? content, int? ttl, bool? proxied, CancellationToken cancellationToken = default)
         {
             _ = string.IsNullOrEmpty(name) ? throw new ArgumentNullException(nameof(name)) : name;
             _ = string.IsNullOrEmpty(recordId) ? throw new ArgumentNullException(nameof(recordId)) : recordId;
             _ = string.IsNullOrEmpty(zoneIdentififer) ? throw new ArgumentNullException(nameof(zoneIdentififer)) : zoneIdentififer;
 
-            var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
+            var payload = new UpdateDnsRecordPayload(name, type, content, ttl, proxied);
             var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");
-            return await PatchAsync<UpdateDNSRecord, DNSRecord>(uri, payload, cancellationToken);
+            return await PatchAsync<DnsRecord, UpdateDnsRecordPayload>(uri, payload, cancellationToken);
         }
 
         /// <summary>
@@ -235,7 +218,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="IdResult"/></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<IdResult> DeleteRecordAsync(DNSRecord record, CancellationToken cancellationToken = default)
+        public async Task<IdResult> DeleteRecordAsync(DnsRecord record, CancellationToken cancellationToken = default)
         {
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{record.ZoneId}/{EntityNamePlural}/{record.Id}");
             return await DeleteAsync<IdResult>(uri, cancellationToken);

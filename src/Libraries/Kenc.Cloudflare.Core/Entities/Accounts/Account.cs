@@ -1,4 +1,4 @@
-﻿namespace Kenc.Cloudflare.Core.Entities
+﻿namespace Kenc.Cloudflare.Core.Entities.Accounts
 {
     using System.Text.Json.Serialization;
 

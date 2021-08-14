@@ -1,13 +1,13 @@
-﻿namespace Kenc.Cloudflare.Core.Entities
-{
-    using System;
-    using System.Text.Json.Serialization;
-    using Kenc.Cloudflare.Core.Clients.Enums;
+﻿using System;
+using System.Text.Json.Serialization;
+using Kenc.Cloudflare.Core.Clients.Enums;
 
-    public class DNSRecord : CloudflareBaseEntity
+namespace Kenc.Cloudflare.Core.Entities.DnsRecords
+{
+    public class DnsRecord : CloudflareBaseEntity
     {
         [JsonPropertyName("type")]
-        public DNSRecordType Type { get; set; }
+        public DnsRecordType Type { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;

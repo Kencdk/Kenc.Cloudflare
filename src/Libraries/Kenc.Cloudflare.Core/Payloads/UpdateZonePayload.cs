@@ -3,7 +3,7 @@
     using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Entities;
 
-    internal class UpdateZonePayload
+    internal class UpdateZonePayload : ICloudflarePayload
     {
         [JsonPropertyName("paused")]
         public bool? Paused { get; set; }

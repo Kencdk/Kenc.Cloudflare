@@ -1,6 +1,7 @@
 ﻿namespace Kenc.Cloudflare.Core.Clients.EntityClients
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
@@ -27,7 +28,7 @@
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>An <see cref="EntityList{ZoneSetting}" /></returns>
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
-        public async Task<EntityList<ZoneSetting>> ListAsync(string zoneIdentifier, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<ZoneSetting>> ListAsync(string zoneIdentifier, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(zoneIdentifier))
             {
@@ -35,7 +36,7 @@
             }
 
             var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}");
-            return await GetAsync<EntityList<ZoneSetting>>(uri, cancellationToken);
+            return await GetAsync<IReadOnlyList<ZoneSetting>>(uri, cancellationToken);
         }
 
         /// <summary>

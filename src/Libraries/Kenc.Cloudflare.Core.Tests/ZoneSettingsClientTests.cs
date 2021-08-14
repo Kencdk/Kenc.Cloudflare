@@ -20,7 +20,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_GetCallsRestClient()
         {
             var zoneSetting = new ZoneSetting { };
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings/setting"));
             var httpClient = new HttpClient(mesageHandler);
 
@@ -47,8 +47,8 @@ namespace Kenc.Cloudflare.Core.Tests
         [TestMethod]
         public async Task ZoneClient_ListCallsRestClient()
         {
-            var zone = new EntityList<ZoneSetting>();
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
+            var zone = new List<ZoneSetting>();
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings"));
             var httpClient = new HttpClient(mesageHandler);
 

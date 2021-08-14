@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Clients.Enums;
+    using Kenc.Cloudflare.Core.Entities.Accounts;
 
     /// <summary>
     /// Class wrapping zone objects in Cloudflare API

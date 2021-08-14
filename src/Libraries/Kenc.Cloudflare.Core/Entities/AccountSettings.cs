@@ -13,5 +13,11 @@
         /// </summary>
         [JsonPropertyName("enforce_twofactor")]
         public bool EnforceTwofactor { get; set; }
+
+        /// <summary>
+        /// Boolean value indicating whether new zones should use the account-level custom nameservers by default
+        /// </summary>
+        [JsonPropertyName("use_account_custom_ns_by_default")]
+        public bool UseAccountCustomNameServersByDefault { get; set; }
     }
 }

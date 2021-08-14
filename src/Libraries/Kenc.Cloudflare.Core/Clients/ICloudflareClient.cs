@@ -8,6 +8,12 @@
     public interface ICloudflareClient
     {
         /// <summary>
+        /// Gets a client for interacting with accounts.
+        /// https://api.cloudflare.com/#accounts-properties
+        /// </summary>
+        AccountClient Accounts { get; }
+
+        /// <summary>
         /// Gets a client for interacting with Zones.
         /// https://api.cloudflare.com/#zone-properties
         /// </summary>
@@ -23,6 +29,6 @@
         /// Gets a client for interacting with a Zones DNS settings.
         /// https://api.cloudflare.com/#zone-settings-get-all-zone-settings
         /// </summary>
-        ZoneDNSSettingsClient ZoneDNSSettingsClient { get; }
+        ZoneDnsRecordsClient ZoneDNSSettingsClient { get; }
     }
 }

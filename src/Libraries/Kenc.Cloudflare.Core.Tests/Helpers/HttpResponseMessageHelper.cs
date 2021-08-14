@@ -1,5 +1,6 @@
 ﻿namespace Kenc.Cloudflare.Core.Tests.Helpers
 {
+    using System.Collections.Generic;
     using System.Net;
     using System.Net.Http;
     using System.Text;
@@ -12,6 +13,23 @@
         public static HttpResponseMessage CreateApiResponse<T>(T entity) where T : class, ICloudflareEntity
         {
             var response = new CloudflareResult<T>
+            {
+                Result = entity
+            };
+
+            var serializedContent = JsonSerializer.Serialize(response);
+            var content = new StringContent(serializedContent, Encoding.UTF8, "application/json");
+
+            return new HttpResponseMessage
+            {
+                Content = content,
+                StatusCode = HttpStatusCode.OK
+            };
+        }
+
+        public static HttpResponseMessage CreateApiResponse<T>(List<T> entity) where T : class, ICloudflareEntity
+        {
+            var response = new CloudflareResult<IReadOnlyList<T>>
             {
                 Result = entity
             };

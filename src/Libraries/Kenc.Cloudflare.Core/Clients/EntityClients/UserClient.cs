@@ -48,7 +48,7 @@
                 Zipcode = zipcode
             };
 
-            return await PatchAsync<UpdateUserPayload, User>(targetUri, payload, cancellationToken);
+            return await PatchAsync<User, UpdateUserPayload>(targetUri, payload, cancellationToken);
         }
     }
 }

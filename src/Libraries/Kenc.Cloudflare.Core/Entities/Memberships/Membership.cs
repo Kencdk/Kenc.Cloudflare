@@ -1,8 +1,9 @@
-﻿namespace Kenc.Cloudflare.Core.Entities
+﻿namespace Kenc.Cloudflare.Core.Entities.Memberships
 {
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Clients.Enums;
+    using Kenc.Cloudflare.Core.Entities.Accounts;
 
     public class Membership : CloudflareBaseEntity
     {

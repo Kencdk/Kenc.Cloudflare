@@ -1,7 +1,7 @@
 ﻿namespace Kenc.Cloudflare.Core.Payloads
 {
     using System.Text.Json.Serialization;
-    using Kenc.Cloudflare.Core.Entities;
+    using Kenc.Cloudflare.Core.Entities.Accounts;
 
     public class CreateZonePayload : ICloudflarePayload
     {

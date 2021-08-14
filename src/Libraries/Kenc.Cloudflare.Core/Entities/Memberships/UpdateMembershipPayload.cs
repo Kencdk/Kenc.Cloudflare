@@ -1,7 +1,8 @@
-﻿namespace Kenc.Cloudflare.Core.Payloads
+﻿namespace Kenc.Cloudflare.Core.Entities.Memberships
 {
     using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Clients.Enums;
+    using Kenc.Cloudflare.Core.Payloads;
 
     public class UpdateMembershipPayload : ICloudflarePayload
     {

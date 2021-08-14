@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
+    using Kenc.Cloudflare.Core.Entities.Accounts;
     using Kenc.Cloudflare.Core.Helpers;
     using Kenc.Cloudflare.Core.Payloads;
 
@@ -19,7 +20,7 @@
 
         public ZoneSettingsClient Settings { get; private set; }
 
-        public ZoneDNSSettingsClient DNSSettings { get; private set; }
+        public ZoneDnsRecordsClient DNSSettings { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ZoneClient"/>
@@ -30,7 +31,7 @@
             this.baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
 
             Settings = new ZoneSettingsClient(httpClient, baseUri);
-            DNSSettings = new ZoneDNSSettingsClient(httpClient, baseUri);
+            DNSSettings = new ZoneDnsRecordsClient(httpClient, baseUri);
         }
 
         /// <summary>
@@ -64,7 +65,7 @@
             }
 
             var payload = new CreateZonePayload(name, account);
-            return await PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken);
+            return await PostAsync<Zone, CreateZonePayload>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken);
         }
 
         /// <summary>
@@ -136,7 +137,7 @@
             var queryString = parameters.Any() ? $"?{string.Join('&', parameters)}" : string.Empty;
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}{queryString}");
-            return await GetAsync<EntityList<Zone>>(uri, cancellationToken);
+            return await GetAsync<IReadOnlyList<Zone>>(uri, cancellationToken);
         }
 
         /// <summary>
@@ -160,7 +161,7 @@
                 VanityNameServers = vanityNameServers?.ToArray()
             };
 
-            return await PatchAsync<UpdateZonePayload, Zone>(targetUri, payload, cancellationToken);
+            return await PatchAsync<Zone, UpdateZonePayload>(targetUri, payload, cancellationToken);
         }
 
         /// <summary>
@@ -198,7 +199,7 @@
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeCachePayload(purgeEverything);
-            return await PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
+            return await PostAsync<IdResult, PurgeCachePayload>(uri, payload, cancellationToken);
         }
 
         /// <summary>
@@ -225,7 +226,7 @@
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
             var payload = new PurgeFilesByTagsOrHostsPayload(tags ?? new string[0], hosts ?? new string[0]);
-            return await PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
+            return await PostAsync<IdResult, PurgeFilesByTagsOrHostsPayload>(uri, payload, cancellationToken);
         }
 
         /// <summary>
