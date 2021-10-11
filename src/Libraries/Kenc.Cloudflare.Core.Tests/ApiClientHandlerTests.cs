@@ -14,7 +14,7 @@
     public class ApiClientHandlerTests
     {
         [TestMethod]
-        public void TestExceptionHandling()
+        public async Task TestExceptionHandling()
         {
             var message = new HttpResponseMessage(HttpStatusCode.BadRequest)
             {
@@ -31,9 +31,9 @@
             var httpClient = new HttpClient(apiHandler);
 
             Func<Task> act = async () => await httpClient.PutAsync(Global.BaseUri, new StringContent("foobar"));
-
-            act.Should().Throw<CloudflareException>()
-                .And.Errors[0].Code.Should().Be("1003");
+            (await act.Should().ThrowAsync<CloudflareException>())
+                .And
+                .Errors[0].Should().Be("1003");
         }
     }
 }

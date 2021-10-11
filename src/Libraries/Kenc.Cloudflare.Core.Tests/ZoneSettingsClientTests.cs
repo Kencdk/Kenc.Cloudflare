@@ -20,7 +20,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneClient_GetCallsRestClient()
         {
             var zoneSetting = new ZoneSetting { };
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings/setting"));
             var httpClient = new HttpClient(mesageHandler);
 
@@ -33,7 +33,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("", "name")]
         [DataRow("name", null)]
         [DataRow("name", "")]
-        public void ZoneClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
+        public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
         {
             var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
             var apiClientHandler = new ApiClientHandler(messageHandler);
@@ -41,14 +41,14 @@ namespace Kenc.Cloudflare.Core.Tests
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
             Func<Task> act = async () => await zoneClient.GetAsync(identifier, name);
-            act.Should().Throw<ArgumentNullException>();
+            await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [TestMethod]
         public async Task ZoneClient_ListCallsRestClient()
         {
             var zone = new EntityList<ZoneSetting>();
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings"));
             var httpClient = new HttpClient(mesageHandler);
 
@@ -59,7 +59,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("")]
         [DataRow(null)]
         [DataTestMethod]
-        public void ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
+        public async Task ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
             var apiClientHandler = new ApiClientHandler(messageHandler);
@@ -67,7 +67,7 @@ namespace Kenc.Cloudflare.Core.Tests
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
             Func<Task> act = async () => await zoneClient.ListAsync(identifier);
-            act.Should().Throw<ArgumentNullException>();
+            await act.Should().ThrowAsync<ArgumentNullException>();
         }
     }
 }
