@@ -32,8 +32,7 @@
 
             Func<Task> act = async () => await httpClient.PutAsync(Global.BaseUri, new StringContent("foobar"));
             (await act.Should().ThrowAsync<CloudflareException>())
-                .And
-                .Errors[0].Should().Be("1003");
+                .And.Errors[0].Code.Should().Be("1003");
         }
     }
 }
