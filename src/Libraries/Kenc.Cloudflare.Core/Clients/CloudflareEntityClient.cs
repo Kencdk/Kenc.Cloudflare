@@ -124,7 +124,9 @@
         {
 #if DEBUG
             var json = await response.Content.ReadAsStringAsync();
+#pragma warning disable CS8603 // Possible null reference return.
             return JsonSerializer.Deserialize<T>(json, jsonSerializerOptions);
+#pragma warning restore CS8603 // Possible null reference return.
 #else
 #pragma warning disable CS8603 // Possible null reference return.
             return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), jsonSerializerOptions);

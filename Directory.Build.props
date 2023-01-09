@@ -7,7 +7,7 @@
     ********
     -->
   <PropertyGroup>  
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
     <Company>Ken Christensen</Company>
     <Product>Kenc.Cloudflare</Product>
     <Authors>Ken Christensen</Authors>
-    <Copyright>© 2021 Ken Christensen. All rights reserved.</Copyright>
+    <Copyright>© 2022 Ken Christensen. All rights reserved.</Copyright>
   </PropertyGroup>
 
   <!-- Saving some paths that are used elsewhere in MSBuild settings and targets -->
