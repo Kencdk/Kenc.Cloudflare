@@ -36,7 +36,7 @@ public void DoSomething() {
 }
 ````
 
-_Not using dependency injection?_ See [IntegrationTests.cs](src\Libraries\Kenc.Cloudflare.Core.IntegrationTests\IntegrationTests.cs) for an example on how to create a client.
+_Not using dependency injection?_ See [IntegrationTests.cs](src\Libraries\Kenc.Cloudflare.Core.IntegrationTests\IntegrationTestBase.cs) for an example on how to create a client.
 
 Get a specific Zone
 ````C#
@@ -61,7 +61,7 @@ catch (CloudflareException exception) when (exception.Errors[0].Code == "81057")
 
 * Request a new feature using [GitHub Issues][].
 * File a bug in [GitHub Issues][].
-* [Tweet](https://twitter.com/kenmandk) with any other feedback.
+* [Tweet](https://twitter.com/kenmandk) or [Mastodon](https://defcon.social/@Kencdk) with any other feedback.
 
 ## Related Projects
 
