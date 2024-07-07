@@ -56,7 +56,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
@@ -171,7 +171,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow(null, "accountId", "accountName")]
         public async Task ZoneClient_CreateThrowsArgumentExceptionForInvalidIdentifierInputs(string name, string accountId, string accountName)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
@@ -223,7 +223,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("")]
         public async Task ZoneClient_DeleteThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
@@ -253,7 +253,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("")]
         public async Task ZoneClient_InitiateZoneActivationCheckThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
@@ -285,7 +285,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("")]
         public async Task ZoneClient_PurgeAllFilesThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
@@ -323,12 +323,12 @@ namespace Kenc.Cloudflare.Core.Tests
         [TestMethod]
         public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidIdentifierInputs()
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, new string[] { "tags" }, new string[] { "hosts" });
+            Func<Task> act = async () => await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, ["tags"], ["hosts"]);
 
             (await act.Should().ThrowAsync<ArgumentNullException>())
                 .And.ParamName.Should().Be("identifier");
@@ -338,7 +338,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs_Data), DynamicDataSourceType.Method)]
         public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs(string[] tags, string[] hosts)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 

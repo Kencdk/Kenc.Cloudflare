@@ -220,7 +220,7 @@
             }
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
-            var payload = new PurgeFilesByTagsOrHostsPayload(tags ?? new string[0], hosts ?? new string[0]);
+            var payload = new PurgeFilesByTagsOrHostsPayload(tags ?? [], hosts ?? []);
             return await PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
         }
 

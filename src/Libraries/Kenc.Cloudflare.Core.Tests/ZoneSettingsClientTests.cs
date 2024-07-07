@@ -1,7 +1,6 @@
 namespace Kenc.Cloudflare.Core.Tests
 {
     using System;
-    using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
     using FluentAssertions;
@@ -35,7 +34,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataRow("name", "")]
         public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 
@@ -61,7 +60,7 @@ namespace Kenc.Cloudflare.Core.Tests
         [DataTestMethod]
         public async Task ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
-            var messageHandler = new FakeHttpMessageHandler(new Dictionary<Uri, HttpResponseMessage>());
+            var messageHandler = new FakeHttpMessageHandler([]);
             var apiClientHandler = new ApiClientHandler(messageHandler);
             var httpClient = new HttpClient(apiClientHandler);
 

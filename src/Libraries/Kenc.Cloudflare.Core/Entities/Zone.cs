@@ -67,6 +67,6 @@
         public string Type { get; set; } = string.Empty;
 
         [JsonPropertyName("name_servers")]
-        public IList<string> NameServers { get; set; } = new List<string>();
+        public IList<string> NameServers { get; set; } = [];
     }
 }

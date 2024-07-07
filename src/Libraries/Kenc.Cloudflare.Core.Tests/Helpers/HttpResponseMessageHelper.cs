@@ -30,10 +30,10 @@
         {
             var response = new CloudflareResult
             {
-                Errors = new[]
-                {
+                Errors =
+                [
                     new CloudflareApiError(errorCode, message)
-                }
+                ]
             };
 
             var serializedContent = JsonSerializer.Serialize(response);

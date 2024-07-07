@@ -20,7 +20,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneDNSSettingsClient_GetCallsRestClient()
         {
             var dnsRecord = new DNSRecord { };
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(dnsRecord);
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(dnsRecord);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/dns_records/domain.invalid"));
             var httpClient = new HttpClient(mesageHandler);
 
@@ -37,7 +37,7 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneDNSSettingsClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
         {
             var dnsRecord = new DNSRecord { };
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(dnsRecord);
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(dnsRecord);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/dns_records/domain.invalid"));
             var httpClient = new HttpClient(mesageHandler);
 
@@ -50,12 +50,12 @@ namespace Kenc.Cloudflare.Core.Tests
         public async Task ZoneDNSSettingsClient_ListPassesAppropriateParameters(string zoneIdentifier, DNSRecordType? type, string name, string content, int? page, int? perPage, string order, Direction? direction, Clients.Enums.Match? match, string expected)
         {
             var entityList = new EntityList<DNSRecord>();
-            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(entityList);
+            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(entityList);
             var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/dns_records{expected}"));
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneDNSSettingsClient(httpClient, Global.BaseUri);
-            var result = await zoneClient.ListAsync(zoneIdentifier, type, name, content, page, perPage, order, direction, match);
+            EntityList<DNSRecord> result = await zoneClient.ListAsync(zoneIdentifier, type, name, content, page, perPage, order, direction, match);
 
             // assert
             Assert.IsNotNull(result);

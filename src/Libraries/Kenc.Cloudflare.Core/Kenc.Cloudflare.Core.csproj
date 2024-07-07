@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -15,7 +14,6 @@
     <PackageProjectUrl>https://github.com/Kencdk/Kenc.Cloudflare/</PackageProjectUrl>
 
     <PackageTags>Cloudflare dns</PackageTags>
-    <Copyright>2021 Ken Christensen</Copyright>
     <Description>.net core library for communicating with Cloudflare API.</Description>
 
     <!-- source link properties -->
@@ -25,13 +23,13 @@
     <RepositoryUrl>https://github.com/Kencdk/Kenc.Cloudflare/</RepositoryUrl>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
-    <PackageReference Include="System.Text.Json" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="[6.0.0,7.0.0)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[8.0.0,9.0.0)" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[8.0.0,9.0.0)" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="[8.0.0,9.0.0)" />
+    <PackageReference Include="System.Text.Json" Version="[8.0.3,9.0.0)" />
   </ItemGroup>
 
   <ItemGroup>
