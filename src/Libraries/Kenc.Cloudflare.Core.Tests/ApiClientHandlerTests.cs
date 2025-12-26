@@ -30,9 +30,11 @@
             var apiHandler = new ApiClientHandler(fakeHttpMessageHandler);
             var httpClient = new HttpClient(apiHandler);
 
-            Func<Task> act = async () => await httpClient.PutAsync(Global.BaseUri, new StringContent("foobar"));
+            Func<Task> act = async () => await httpClient.PutAsync(Global.BaseUri, new StringContent("foobar"), TestContext.CancellationToken);
             (await act.Should().ThrowAsync<CloudflareException>())
                 .And.Errors[0].Code.Should().Be("1003");
         }
+
+        public TestContext TestContext { get; set; }
     }
 }

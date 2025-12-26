@@ -16,7 +16,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
             var domainName = TestContextSetting("domainName");
 
             ICloudflareClient client = CreateClient();
-            IList<Entities.Zone> domain = await client.Zones.ListAsync(domainName, Clients.Enums.ZoneStatus.Active);
+            IList<Entities.Zone> domain = await client.Zones.ListAsync(domainName, Clients.Enums.ZoneStatus.Active, cancellationToken: TestContext.CancellationToken);
             Assert.IsNotNull(domain);
             Assert.AreEqual(domainId, domain[0].Id);
         }
@@ -27,7 +27,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
             var domainId = TestContextSetting("domainId");
 
             ICloudflareClient client = CreateClient();
-            Entities.EntityList<Entities.DNSRecord> dnsRecords = await client.Zones.DNSSettings.ListAsync(domainId, Clients.Enums.DNSRecordType.TXT);
+            Entities.EntityList<Entities.DNSRecord> dnsRecords = await client.Zones.DNSSettings.ListAsync(domainId, Clients.Enums.DNSRecordType.TXT, cancellationToken: TestContext.CancellationToken);
             Assert.IsNotNull(dnsRecords);
             Assert.AreNotEqual(0, dnsRecords.Count);
         }
@@ -39,12 +39,12 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
             var domainId = TestContextSetting("domainId");
 
             ICloudflareClient client = CreateClient();
-            Entities.DNSRecord record = await client.Zones.DNSSettings.CreateRecordAsync(domainId, recordIdentifier, Clients.Enums.DNSRecordType.TXT, recordIdentifier);
+            Entities.DNSRecord record = await client.Zones.DNSSettings.CreateRecordAsync(domainId, recordIdentifier, Clients.Enums.DNSRecordType.TXT, recordIdentifier, cancellationToken: TestContext.CancellationToken);
             Assert.IsNotNull(record);
             Assert.AreEqual(recordIdentifier, record.Content);
 
             // delete the record again
-            await client.Zones.DNSSettings.DeleteRecordAsync(record);
+            await client.Zones.DNSSettings.DeleteRecordAsync(record, TestContext.CancellationToken);
         }
     }
 }

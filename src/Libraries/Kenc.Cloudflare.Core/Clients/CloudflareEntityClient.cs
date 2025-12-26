@@ -138,7 +138,7 @@
         protected StringContent SerializeContent<T>(T message)
         {
 #if DEBUG
-            var str = JsonSerializer.Serialize(message, typeof(T), jsonSerializerOptions);
+            var str = JsonSerializer.Serialize(message, jsonSerializerOptions);
             return new StringContent(str, Encoding.UTF8, ApplicationJsonMime);
 #else
             // workaround for issue where json content is wrapped in extra characters

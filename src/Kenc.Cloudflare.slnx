@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Libraries/Kenc.Cloudflare.Core.IntegrationTests/Kenc.Cloudflare.Core.IntegrationTests.csproj" />
+  <Project Path="Libraries/Kenc.Cloudflare.Core.Tests/Kenc.Cloudflare.Core.Tests.csproj" />
+  <Project Path="Libraries/Kenc.Cloudflare.Core/Kenc.Cloudflare.Core.csproj" />
+</Solution>

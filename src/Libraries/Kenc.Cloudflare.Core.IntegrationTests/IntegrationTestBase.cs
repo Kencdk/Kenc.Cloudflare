@@ -33,9 +33,9 @@
 
         protected string TestContextSetting(string name)
         {
-            if (TestContext.Properties.Contains(name))
+            if (TestContext.Properties.TryGetValue(name, out var value))
             {
-                return (string)TestContext.Properties[name];
+                return (string)value;
             }
 
             return System.Environment.GetEnvironmentVariable(name);

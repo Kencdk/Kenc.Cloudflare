@@ -21,11 +21,8 @@
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (request.Content != null)
-            {
-                // cloudflare does not expect a charset in the content-type header.
-                request.Content.Headers.ContentType.CharSet = string.Empty;
-            }
+            // cloudflare does not expect a charset in the content-type header.
+            request.Content?.Headers.ContentType.CharSet = string.Empty;
 
             HttpResponseMessage httpResponseMessage = await base.SendAsync(request, cancellationToken);
             if (!httpResponseMessage.IsSuccessStatusCode)

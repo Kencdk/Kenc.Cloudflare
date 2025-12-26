@@ -25,11 +25,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="[6.0.0,7.0.0)" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="[8.0.0,9.0.0)" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="[8.0.0,9.0.0)" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="[8.0.0,9.0.0)" />
-    <PackageReference Include="System.Text.Json" Version="[8.0.3,9.0.0)" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
   <ItemGroup>

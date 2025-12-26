@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
@@ -147,7 +146,7 @@
             }
 
             var queryString = string.Empty;
-            if (parameters.Any())
+            if (parameters.Count != 0)
             {
                 queryString = "?" + string.Join('&', parameters);
             }

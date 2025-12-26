@@ -4,6 +4,7 @@ namespace Kenc.Cloudflare.Core.Tests
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using FluentAssertions;
     using Kenc.Cloudflare.Core.Clients.EntityClients;
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
@@ -25,15 +26,14 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneDNSSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.GetAsync(zoneIdentifier, "domain.invalid");
+            await zoneClient.GetAsync(zoneIdentifier, "domain.invalid", TestContext.CancellationToken);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null, "name")]
         [DataRow("", "name")]
         [DataRow("name", null)]
         [DataRow("name", "")]
-        [ExpectedException(typeof(ArgumentNullException))]
         public async Task ZoneDNSSettingsClient_GetThrowsArgumentExceptionForInvalidInputs(string identifier, string name)
         {
             var dnsRecord = new DNSRecord { };
@@ -42,11 +42,12 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneDNSSettingsClient(httpClient, Global.BaseUri);
-            _ = await zoneClient.GetAsync(identifier, name);
+            Func<Task<DNSRecord>> action = async () => await zoneClient.GetAsync(identifier, name, TestContext.CancellationToken);
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(ZoneDNSSettingsClient_ListPassesAppropriateParameters_Data), DynamicDataSourceType.Method)]
+        [TestMethod]
+        [DynamicData(nameof(ZoneDNSSettingsClient_ListPassesAppropriateParameters_Data))]
         public async Task ZoneDNSSettingsClient_ListPassesAppropriateParameters(string zoneIdentifier, DNSRecordType? type, string name, string content, int? page, int? perPage, string order, Direction? direction, Clients.Enums.Match? match, string expected)
         {
             var entityList = new EntityList<DNSRecord>();
@@ -55,7 +56,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneDNSSettingsClient(httpClient, Global.BaseUri);
-            EntityList<DNSRecord> result = await zoneClient.ListAsync(zoneIdentifier, type, name, content, page, perPage, order, direction, match);
+            EntityList<DNSRecord> result = await zoneClient.ListAsync(zoneIdentifier, type, name, content, page, perPage, order, direction, match, TestContext.CancellationToken);
 
             // assert
             Assert.IsNotNull(result);
@@ -72,5 +73,7 @@ namespace Kenc.Cloudflare.Core.Tests
             yield return new object[] { zoneIdentifier, DNSRecordType.A, "example.invalid", "127.0.0.1", 1, 20, "type", Direction.Asc, null, "?type=A&name=example.invalid&content=127.0.0.1&page=1&per_page=20&order=type&direction=asc" };
             yield return new object[] { zoneIdentifier, DNSRecordType.A, "example.invalid", "127.0.0.1", 1, 20, "type", Direction.Asc, Clients.Enums.Match.All, "?type=A&name=example.invalid&content=127.0.0.1&page=1&per_page=20&order=type&direction=asc&match=all" };
         }
+
+        public TestContext TestContext { get; set; }
     }
 }

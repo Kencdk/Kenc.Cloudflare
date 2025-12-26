@@ -129,7 +129,7 @@
                 parameters.Add($"{nameof(match)}={match.ConvertToString()}");
             }
 
-            var queryString = parameters.Any() ? $"?{string.Join('&', parameters)}" : string.Empty;
+            var queryString = parameters.Count != 0 ? $"?{string.Join('&', parameters)}" : string.Empty;
 
             var uri = new Uri(baseUri, $"{EntityNamePlural}{queryString}");
             return await GetAsync<EntityList<Zone>>(uri, cancellationToken);
@@ -214,7 +214,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            if ((tags == null || !tags.Any()) && (hosts == null || !hosts.Any()))
+            if ((tags == null || tags.Length == 0) && (hosts == null || hosts.Length == 0))
             {
                 throw new ArgumentOutOfRangeException(nameof(tags), "Tags and hosts can't both be null/empty.");
             }

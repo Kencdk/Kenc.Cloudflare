@@ -10,7 +10,7 @@ variables:
    major: 0
    minor: 1
    beta: true
-   solution: '**/*.sln'
+   solution: '**/*.slnx'
    buildConfiguration: 'Release'
 
 stages:

@@ -24,10 +24,10 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.GetAsync(zoneIdentifier, "setting");
+            await zoneClient.GetAsync(zoneIdentifier, "setting", TestContext.CancellationToken);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null, "name")]
         [DataRow("", "name")]
         [DataRow("name", null)]
@@ -39,7 +39,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.GetAsync(identifier, name);
+            Func<Task> act = async () => await zoneClient.GetAsync(identifier, name, TestContext.CancellationToken);
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
@@ -52,12 +52,12 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.ListAsync(zoneIdentifier);
+            await zoneClient.ListAsync(zoneIdentifier, TestContext.CancellationToken);
         }
 
         [DataRow("")]
         [DataRow(null)]
-        [DataTestMethod]
+        [TestMethod]
         public async Task ZoneClient_ListThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var messageHandler = new FakeHttpMessageHandler([]);
@@ -65,8 +65,10 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.ListAsync(identifier);
+            Func<Task> act = async () => await zoneClient.ListAsync(identifier, TestContext.CancellationToken);
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
+
+        public TestContext TestContext { get; set; }
     }
 }

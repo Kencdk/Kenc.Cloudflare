@@ -17,7 +17,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
             var userTokenName = $"inttoken{DateTime.UtcNow:yyyymmddhhMMss}";
 
             ICloudflareClient client = CreateClient();
-            await client.UserClient.UserTokenClient.ListTokensAsync();
+            await client.UserClient.UserTokenClient.ListTokensAsync(cancellationToken: TestContext.CancellationToken);
 
             var policy = new Policy
             {
@@ -25,29 +25,29 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
                 Resources = new Dictionary<string, string> {
                     { $"com.cloudflare.api.account.zone.{TestContextSetting("domainId")}", "*" }
                 },
-                PermissionGroups = new PermissionGroup[]
-                {
-                    new PermissionGroup { Id = "4755a26eedb94da69e1066d98aa820be"}
-                },
+                PermissionGroups =
+                [
+                    new() { Id = "4755a26eedb94da69e1066d98aa820be"}
+                ],
             };
 
             UserToken token = await client.UserClient.UserTokenClient.CreateTokenAsync(
                 userTokenName,
-                new[] { policy },
+                [policy],
                 notBefore: DateTimeOffset.UtcNow.Subtract(TimeSpan.FromHours(1)),
-                expiresOn: DateTimeOffset.UtcNow.AddHours(1));
+                expiresOn: DateTimeOffset.UtcNow.AddHours(1), cancellationToken: TestContext.CancellationToken);
 
             // get the token
-            await client.UserClient.UserTokenClient.GetUserToken(token.Id);
+            await client.UserClient.UserTokenClient.GetUserToken(token.Id, TestContext.CancellationToken);
 
             // verify token
-            await client.UserClient.UserTokenClient.VerifyTokenAsync(token.Value);
+            await client.UserClient.UserTokenClient.VerifyTokenAsync(token.Value, TestContext.CancellationToken);
 
-            var newToken = await client.UserClient.UserTokenClient.RollTokenAsync(token.Id);
-            await client.UserClient.UserTokenClient.VerifyTokenAsync(newToken);
+            var newToken = await client.UserClient.UserTokenClient.RollTokenAsync(token.Id, TestContext.CancellationToken);
+            await client.UserClient.UserTokenClient.VerifyTokenAsync(newToken, TestContext.CancellationToken);
 
             // delete token again.
-            await client.UserClient.UserTokenClient.DeleteTokenAsync(token.Id);
+            await client.UserClient.UserTokenClient.DeleteTokenAsync(token.Id, TestContext.CancellationToken);
         }
     }
 }

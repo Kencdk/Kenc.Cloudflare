@@ -28,7 +28,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Zone result = await zoneClient.GetAsync(zoneIdentifier);
+            Zone result = await zoneClient.GetAsync(zoneIdentifier, TestContext.CancellationToken);
 
             // assert
             Assert.IsNotNull(result);
@@ -44,16 +44,15 @@ namespace Kenc.Cloudflare.Core.Tests
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
 
-            Func<Task> act = async () => await zoneClient.GetAsync(zoneIdentifier);
+            Func<Task> act = async () => await zoneClient.GetAsync(zoneIdentifier, TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<CloudflareException>())
                 .And.Errors[0].Code.Should().Be("1049");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("")]
-        [ExpectedException(typeof(ArgumentNullException))]
         public async Task ZoneClient_GetThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
         {
             var messageHandler = new FakeHttpMessageHandler([]);
@@ -61,7 +60,8 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            _ = await zoneClient.GetAsync(identifier);
+            Func<Task<Zone>> action = async () => await zoneClient.GetAsync(identifier, TestContext.CancellationToken);
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [TestMethod]
@@ -73,14 +73,14 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            IList<Zone> result = await zoneClient.ListAsync();
+            IList<Zone> result = await zoneClient.ListAsync(cancellationToken: TestContext.CancellationToken);
 
             // assert
-            Assert.AreEqual(zone.Count, result.Count, "The returned zone object should have been passed through");
+            Assert.HasCount(zone.Count, result, "The returned zone object should have been passed through");
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(ZoneClient_ListPassesAppropriateParameters_Data), DynamicDataSourceType.Method)]
+        [TestMethod]
+        [DynamicData(nameof(ZoneClient_ListPassesAppropriateParameters_Data))]
         public async Task ZoneClient_ListPassesAppropriateParameters(string name, ZoneStatus? status, int? page, int? perPage, string order, Direction? direction, Match? match, string expected)
         {
             var zone = new EntityList<Zone>();
@@ -89,10 +89,10 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            IList<Zone> result = await zoneClient.ListAsync(name, status, page, perPage, order, direction, match);
+            IList<Zone> result = await zoneClient.ListAsync(name, status, page, perPage, order, direction, match, TestContext.CancellationToken);
 
             // assert
-            Assert.AreEqual(zone.Count, result.Count, "The returned zone object should have been passed through");
+            Assert.HasCount(zone.Count, result, "The returned zone object should have been passed through");
         }
 
         public static IEnumerable<object[]> ZoneClient_ListPassesAppropriateParameters_Data()
@@ -113,7 +113,7 @@ namespace Kenc.Cloudflare.Core.Tests
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
 
-            Func<Task> act = async () => await zoneClient.ListAsync();
+            Func<Task> act = async () => await zoneClient.ListAsync(cancellationToken: TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<CloudflareException>())
                 .And.Errors[0].Code.Should().Be("1049");
@@ -134,7 +134,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 Id = "01a7362d577a6c3019a474fd6f485823",
                 Name = "Demo Account"
             };
-            Zone result = await zoneClient.CreateAsync("example.invalid", account);
+            Zone result = await zoneClient.CreateAsync("example.invalid", account, TestContext.CancellationToken);
 
             // assert
             Assert.IsNotNull(result);
@@ -156,13 +156,13 @@ namespace Kenc.Cloudflare.Core.Tests
                 Name = "Demo Account"
             };
 
-            Func<Task> act = async () => await zoneClient.CreateAsync("example.invalid", account);
+            Func<Task> act = async () => await zoneClient.CreateAsync("example.invalid", account, TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<CloudflareException>())
                 .And.Errors[0].Code.Should().Be("1049");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("name", "accountId", "")]
         [DataRow("name", "accountId", null)]
         [DataRow("name", "", "accountName")]
@@ -183,7 +183,7 @@ namespace Kenc.Cloudflare.Core.Tests
                 Name = accountName
             };
 
-            Func<Task> act = async () => await zoneClient.CreateAsync(name, account);
+            Func<Task> act = async () => await zoneClient.CreateAsync(name, account, TestContext.CancellationToken);
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
@@ -198,7 +198,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            _ = await zoneClient.DeleteAsync(identifier);
+            _ = await zoneClient.DeleteAsync(identifier, TestContext.CancellationToken);
         }
 
         [TestMethod]
@@ -212,13 +212,13 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.DeleteAsync(identifier);
+            Func<Task> act = async () => await zoneClient.DeleteAsync(identifier, TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<CloudflareException>())
                 .And.Errors[0].Code.Should().Be("1049");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("")]
         public async Task ZoneClient_DeleteThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
@@ -228,7 +228,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.DeleteAsync(identifier);
+            Func<Task> act = async () => await zoneClient.DeleteAsync(identifier, TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<ArgumentNullException>())
                 .And.ParamName.Should().Be("identifier");
@@ -245,10 +245,10 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            _ = await zoneClient.InitiateZoneActivationCheckAsync(zoneIdentifier);
+            _ = await zoneClient.InitiateZoneActivationCheckAsync(zoneIdentifier, TestContext.CancellationToken);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("")]
         public async Task ZoneClient_InitiateZoneActivationCheckThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
@@ -258,13 +258,13 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.InitiateZoneActivationCheckAsync(identifier);
+            Func<Task> act = async () => await zoneClient.InitiateZoneActivationCheckAsync(identifier, TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<ArgumentNullException>())
                 .And.ParamName.Should().Be("identifier");
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(true)]
         [DataRow(false)]
         public async Task ZoneClient_PurgeAllFilesCallsRestClient(bool purgeAll)
@@ -277,10 +277,10 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            _ = await zoneClient.PurgeAllFiles(zoneIdentifier, purgeAll);
+            _ = await zoneClient.PurgeAllFiles(zoneIdentifier, purgeAll, TestContext.CancellationToken);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(null)]
         [DataRow("")]
         public async Task ZoneClient_PurgeAllFilesThrowsArgumentExceptionForInvalidIdentifierInputs(string identifier)
@@ -290,14 +290,14 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.PurgeAllFiles(identifier, true);
+            Func<Task> act = async () => await zoneClient.PurgeAllFiles(identifier, true, TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<ArgumentNullException>())
                 .And.ParamName.Should().Be("identifier");
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsCallsRestClient_Data), DynamicDataSourceType.Method)]
+        [TestMethod]
+        [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsCallsRestClient_Data))]
         public async Task ZoneClient_PurgeFilesByTagsOrHostsCallsRestClient(string[] tags, string[] hosts)
         {
             var identifier = "1235678";
@@ -308,7 +308,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            _ = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
+            _ = await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts, TestContext.CancellationToken);
 
             // check the request for content.
         }
@@ -328,14 +328,14 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, ["tags"], ["hosts"]);
+            Func<Task> act = async () => await zoneClient.PurgeFilesByTagsOrHosts(string.Empty, ["tags"], ["hosts"], TestContext.CancellationToken);
 
             (await act.Should().ThrowAsync<ArgumentNullException>())
                 .And.ParamName.Should().Be("identifier");
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs_Data), DynamicDataSourceType.Method)]
+        [TestMethod]
+        [DynamicData(nameof(ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs_Data))]
         public async Task ZoneClient_PurgeFilesByTagsOrHostsThrowsArgumentExceptionForInvalidInputs(string[] tags, string[] hosts)
         {
             var messageHandler = new FakeHttpMessageHandler([]);
@@ -343,7 +343,7 @@ namespace Kenc.Cloudflare.Core.Tests
             var httpClient = new HttpClient(apiClientHandler);
 
             var zoneClient = new ZoneClient(httpClient, Global.BaseUri);
-            Func<Task> act = async () => await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts);
+            Func<Task> act = async () => await zoneClient.PurgeFilesByTagsOrHosts(zoneIdentifier, tags, hosts, TestContext.CancellationToken);
             await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
         }
 
@@ -352,5 +352,7 @@ namespace Kenc.Cloudflare.Core.Tests
             yield return new object[] { null, null };
             yield return new object[] { Array.Empty<string>(), Array.Empty<string>() };
         }
+
+        public TestContext TestContext { get; set; }
     }
 }
