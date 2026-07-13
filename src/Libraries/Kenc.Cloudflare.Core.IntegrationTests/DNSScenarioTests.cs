@@ -27,7 +27,7 @@
             var client = CreateClient();
             var dnsRecords = await client.Zones.DNSSettings.ListAsync(domainId, Clients.Enums.DNSRecordType.TXT, cancellationToken: TestContext.CancellationToken);
             Assert.IsNotNull(dnsRecords);
-            Assert.AreNotEqual(0, dnsRecords.Count);
+            Assert.IsNotEmpty(dnsRecords);
         }
 
         [TestMethod]

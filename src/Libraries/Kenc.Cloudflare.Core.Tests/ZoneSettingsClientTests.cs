@@ -13,18 +13,18 @@
     [TestClass]
     public class ZoneSettingsClientTests
     {
-        private static readonly string zoneIdentifier = "01a7362d577a6c3019a474fd6f485823";
+        private static readonly string ZoneIdentifier = "01a7362d577a6c3019a474fd6f485823";
 
         [TestMethod]
         public async Task ZoneClient_GetCallsRestClient()
         {
             var zoneSetting = new ZoneSetting { };
-            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
-            var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings/setting"));
+            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zoneSetting);
+            var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{ZoneIdentifier}/settings/setting"));
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.GetAsync(zoneIdentifier, "setting", TestContext.CancellationToken);
+            await zoneClient.GetAsync(ZoneIdentifier, "setting", TestContext.CancellationToken);
         }
 
         [TestMethod]
@@ -47,12 +47,12 @@
         public async Task ZoneClient_ListCallsRestClient()
         {
             var zone = new EntityList<ZoneSetting>();
-            HttpResponseMessage responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
-            var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{zoneIdentifier}/settings"));
+            var responseMessage = HttpResponseMessageHelper.CreateApiResponse(zone);
+            var mesageHandler = new FakeHttpMessageHandler(responseMessage, new Uri(Global.BaseUri, $"zones/{ZoneIdentifier}/settings"));
             var httpClient = new HttpClient(mesageHandler);
 
             var zoneClient = new ZoneSettingsClient(httpClient, Global.BaseUri);
-            await zoneClient.ListAsync(zoneIdentifier, TestContext.CancellationToken);
+            await zoneClient.ListAsync(ZoneIdentifier, TestContext.CancellationToken);
         }
 
         [DataRow("")]
