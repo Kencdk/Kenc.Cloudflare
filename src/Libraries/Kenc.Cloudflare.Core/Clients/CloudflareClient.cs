@@ -18,7 +18,7 @@
         private const string AuthHeaderUsername = "X-Auth-Email";
         private const string ApplicationJsonMime = "application/json";
 
-        private readonly HttpClient httpClient;
+        private readonly HttpClient _httpClient;
 
         public ZoneClient Zones { get; private set; }
 
@@ -36,47 +36,45 @@
         /// <exception cref="ArgumentNullException">Throws when any of the parameters are null or <see cref="string.Empty"/></exception>
         public CloudflareClient(IHttpClientFactory httpClientFactory, IOptions<CloudflareClientOptions> options)
         {
-            CloudflareClientOptions cloudflareOptions = options.Value ?? throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}");
+            var cloudflareOptions = options.Value ?? throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}");
             if (cloudflareOptions.Endpoint == null)
             {
                 throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}.{nameof(options.Value.Endpoint)}");
             }
             _ = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
-            httpClient = httpClientFactory.CreateClient("Cloudflare");
-            Type client = typeof(CloudflareClient);
-            AssemblyFileVersionAttribute runtimeVersion = client.Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
-            var userAgent = $"{client.FullName}/{runtimeVersion.Version} ({RuntimeInformation.OSDescription} {RuntimeInformation.ProcessArchitecture})";
-
-            httpClient = httpClientFactory.CreateClient("Cloudflare");
+            _httpClient = httpClientFactory.CreateClient("Cloudflare");
+            var client = typeof(CloudflareClient);
+            var runtimeVersion = client.Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
+            var userAgent = $"{client.FullName}/{runtimeVersion?.Version} ({RuntimeInformation.OSDescription} {RuntimeInformation.ProcessArchitecture})";
 
             // are we using ApiKey or UserToken?
             if (!string.IsNullOrEmpty(cloudflareOptions.UserToken))
             {
-                httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {cloudflareOptions.UserToken}");
+                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {cloudflareOptions.UserToken}");
             }
             else
             {
                 if (string.IsNullOrEmpty(cloudflareOptions.ApiKey))
                 {
                     // must specify either a user token or an API key.
-                    throw new ArgumentNullException($"{ nameof(options) }.{ nameof(options.Value)}.{ nameof(cloudflareOptions.ApiKey)}");
+                    throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}.{nameof(cloudflareOptions.ApiKey)}");
                 }
                 else if (string.IsNullOrEmpty(cloudflareOptions.Username))
                 {
                     throw new ArgumentNullException($"{nameof(options)}.{nameof(options.Value)}.{nameof(cloudflareOptions.Username)}");
                 }
 
-                httpClient.DefaultRequestHeaders.Add(AuthHeaderKey, cloudflareOptions.ApiKey);
-                httpClient.DefaultRequestHeaders.Add(AuthHeaderUsername, cloudflareOptions.Username);
+                _httpClient.DefaultRequestHeaders.Add(AuthHeaderKey, cloudflareOptions.ApiKey);
+                _httpClient.DefaultRequestHeaders.Add(AuthHeaderUsername, cloudflareOptions.Username);
             }
 
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.UserAgent.ToString(), userAgent);
-            httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), ApplicationJsonMime);
+            _httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.UserAgent.ToString(), userAgent);
+            _httpClient.DefaultRequestHeaders.Add(HttpRequestHeader.ContentType.ToString(), ApplicationJsonMime);
 
-            Zones = new ZoneClient(httpClient, cloudflareOptions.Endpoint);
-            UserClient = new UserClient(httpClient, cloudflareOptions.Endpoint);
-            ZoneDNSSettingsClient = new ZoneDNSSettingsClient(httpClient, cloudflareOptions.Endpoint);
+            Zones = new ZoneClient(_httpClient, cloudflareOptions.Endpoint);
+            UserClient = new UserClient(_httpClient, cloudflareOptions.Endpoint);
+            ZoneDNSSettingsClient = new ZoneDNSSettingsClient(_httpClient, cloudflareOptions.Endpoint);
         }
     }
 }

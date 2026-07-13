@@ -2,7 +2,6 @@
 {
     using System.Text.Json.Serialization;
     using Kenc.Cloudflare.Core.Clients.Enums;
-    using Kenc.Cloudflare.Core.PayloadEntities;
 
     public class CreateDNSRecord : ICloudflarePayload
     {

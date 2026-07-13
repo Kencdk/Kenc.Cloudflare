@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using Kenc.Cloudflare.Core.Clients;
+    using Kenc.Cloudflare.Core.Helpers;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,14 +21,14 @@
                 { "Endpoint", CloudflareAPIEndpoint.V4Endpoint.ToString() }
             };
 
-            IConfigurationRoot configuration = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(myConfiguration)
                 .Build();
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddHttpClient();
             serviceCollection.AddCloudflareClient(configuration);
-            ServiceProvider services = serviceCollection.BuildServiceProvider();
+            var services = serviceCollection.BuildServiceProvider();
             return services.GetRequiredService<ICloudflareClient>();
         }
 

@@ -11,13 +11,13 @@
     /// </summary>
     public class ZoneSettingsClient : CloudflareEntityClient
     {
-        public static readonly string entityNamePlural = "settings";
+        private const string EntityNamePlural = "settings";
 
-        private readonly Uri baseUri;
+        private readonly Uri _baseUri;
 
         public ZoneSettingsClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
-            this.baseUri = baseUri;
+            this._baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
         }
 
         /// <summary>
@@ -34,7 +34,7 @@
                 throw new ArgumentNullException(nameof(zoneIdentifier));
             }
 
-            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}");
+            var uri = new Uri(_baseUri, $"{ZoneClient.EntityNamePlural}/{Uri.EscapeDataString(zoneIdentifier)}/{EntityNamePlural}");
             return await GetAsync<EntityList<ZoneSetting>>(uri, cancellationToken);
         }
 
@@ -57,7 +57,7 @@
                 throw new ArgumentNullException(nameof(name));
             }
 
-            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{entityNamePlural}/{name}");
+            var uri = new Uri(_baseUri, $"{ZoneClient.EntityNamePlural}/{Uri.EscapeDataString(zoneIdentifier)}/{EntityNamePlural}/{Uri.EscapeDataString(name)}");
             return await GetAsync<ZoneSetting>(uri, cancellationToken);
         }
     }

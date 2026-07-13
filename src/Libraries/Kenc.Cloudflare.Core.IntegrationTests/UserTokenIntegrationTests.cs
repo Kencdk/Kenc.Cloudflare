@@ -1,9 +1,8 @@
-namespace Kenc.Cloudflare.Core.IntegrationTests
+﻿namespace Kenc.Cloudflare.Core.IntegrationTests
 {
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Kenc.Cloudflare.Core.Clients;
     using Kenc.Cloudflare.Core.Entities;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,7 +15,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
         {
             var userTokenName = $"inttoken{DateTime.UtcNow:yyyymmddhhMMss}";
 
-            ICloudflareClient client = CreateClient();
+            var client = CreateClient();
             await client.UserClient.UserTokenClient.ListTokensAsync(cancellationToken: TestContext.CancellationToken);
 
             var policy = new Policy
@@ -31,7 +30,7 @@ namespace Kenc.Cloudflare.Core.IntegrationTests
                 ],
             };
 
-            UserToken token = await client.UserClient.UserTokenClient.CreateTokenAsync(
+            var token = await client.UserClient.UserTokenClient.CreateTokenAsync(
                 userTokenName,
                 [policy],
                 notBefore: DateTimeOffset.UtcNow.Subtract(TimeSpan.FromHours(1)),

@@ -8,11 +8,11 @@
 
     public class FakeHttpMessageHandler : DelegatingHandler
     {
-        private readonly Dictionary<Uri, HttpResponseMessage> results;
+        private readonly Dictionary<Uri, HttpResponseMessage> _results;
 
         public FakeHttpMessageHandler(HttpResponseMessage responseMessage, Uri uri)
         {
-            results = new Dictionary<Uri, HttpResponseMessage>()
+            _results = new Dictionary<Uri, HttpResponseMessage>()
             {
                 { uri, responseMessage }
             };
@@ -20,12 +20,12 @@
 
         public FakeHttpMessageHandler(Dictionary<Uri, HttpResponseMessage> results)
         {
-            this.results = results;
+            _results = results;
         }
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            if (results.Remove(request.RequestUri, out HttpResponseMessage responseMessage))
+            if (_results.Remove(request.RequestUri, out var responseMessage))
             {
                 return Task.FromResult(responseMessage);
             }

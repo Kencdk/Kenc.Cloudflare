@@ -1,4 +1,4 @@
-﻿namespace Kenc.Cloudflare.Core.PayloadEntities
+﻿namespace Kenc.Cloudflare.Core.Payloads
 {
     using Kenc.Cloudflare.Core.Entities;
 

@@ -1,20 +1,14 @@
 <Project>
   <ItemGroup>
     <!-- net framework packages -->
-    <PackageVersion Include="Microsoft.AspNet.WebApi.Client" Version="[6.0.0,10.0.0)" />
     <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.1" />
     <PackageVersion Include="System.Text.Json" Version="10.0.1" />
-    <!-- other libraries -->
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <!-- Test libraries -->
     <PackageVersion Include="FluentAssertions" Version="8.8.0" />
-    <PackageVersion Include="Moq" Version="4.20.72" />
-    <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="MSTest.TestAdapter" Version="4.0.2" />
     <PackageVersion Include="MSTest.TestFramework" Version="4.0.2" />

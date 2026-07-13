@@ -1,4 +1,4 @@
-﻿namespace Kenc.Cloudflare.Core
+﻿namespace Kenc.Cloudflare.Core.Helpers
 {
     using Kenc.Cloudflare.Core.Clients;
     using Microsoft.Extensions.Configuration;

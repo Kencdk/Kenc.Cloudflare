@@ -1,4 +1,4 @@
-namespace Kenc.Cloudflare.Core.Tests
+﻿namespace Kenc.Cloudflare.Core.Tests
 {
     using System;
     using System.Net.Http;

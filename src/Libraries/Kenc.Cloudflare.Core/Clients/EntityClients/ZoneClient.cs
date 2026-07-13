@@ -9,14 +9,13 @@
     using Kenc.Cloudflare.Core.Clients.Enums;
     using Kenc.Cloudflare.Core.Entities;
     using Kenc.Cloudflare.Core.Helpers;
-    using Kenc.Cloudflare.Core.PayloadEntities;
     using Kenc.Cloudflare.Core.Payloads;
 
     public class ZoneClient : CloudflareEntityClient
     {
         public static readonly string EntityNamePlural = "zones";
 
-        private readonly Uri baseUri;
+        private readonly Uri _baseUri;
 
         public ZoneSettingsClient Settings { get; private set; }
 
@@ -28,7 +27,7 @@
         /// <param name="httpClient">Client to use to send requests.</param>
         public ZoneClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
-            this.baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
+            _baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
 
             Settings = new ZoneSettingsClient(httpClient, baseUri);
             DNSSettings = new ZoneDNSSettingsClient(httpClient, baseUri);
@@ -60,7 +59,7 @@
             }
 
             var payload = new CreateZonePayload(name, account);
-            return await PostAsync<CreateZonePayload, Zone>(new Uri(baseUri, EntityNamePlural), payload, cancellationToken);
+            return await PostAsync<CreateZonePayload, Zone>(new Uri(_baseUri, EntityNamePlural), payload, cancellationToken);
         }
 
         /// <summary>
@@ -76,7 +75,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await GetAsync<Zone>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
+            return await GetAsync<Zone>(new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(identifier)}"), cancellationToken);
         }
 
         /// <summary>
@@ -96,7 +95,7 @@
             var parameters = new List<string>();
             if (!string.IsNullOrEmpty(domain))
             {
-                parameters.Add($"name={domain}");
+                parameters.Add($"name={Uri.EscapeDataString(domain)}");
             }
 
             if (status.HasValue)
@@ -116,7 +115,7 @@
 
             if (!string.IsNullOrEmpty(order))
             {
-                parameters.Add($"{nameof(order)}={order}");
+                parameters.Add($"{nameof(order)}={Uri.EscapeDataString(order)}");
             }
 
             if (direction.HasValue)
@@ -131,7 +130,7 @@
 
             var queryString = parameters.Count != 0 ? $"?{string.Join('&', parameters)}" : string.Empty;
 
-            var uri = new Uri(baseUri, $"{EntityNamePlural}{queryString}");
+            var uri = new Uri(_baseUri, $"{EntityNamePlural}{queryString}");
             return await GetAsync<EntityList<Zone>>(uri, cancellationToken);
         }
 
@@ -148,7 +147,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         public async Task<Zone> PatchZoneAsync(string identifier, bool? paused = null, IList<string>? vanityNameServers = null, string? planId = null, CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}");
+            var targetUri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(identifier)}");
             var payload = new UpdateZonePayload
             {
                 Paused = paused,
@@ -173,7 +172,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/activation_check");
+            var uri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(identifier)}/activation_check");
             return await PutAsync<IdResult>(uri, cancellationToken);
         }
 
@@ -192,7 +191,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
+            var uri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(identifier)}/purge_cache");
             var payload = new PurgeCachePayload(purgeEverything);
             return await PostAsync<PurgeCachePayload, IdResult>(uri, payload, cancellationToken);
         }
@@ -219,7 +218,7 @@
                 throw new ArgumentOutOfRangeException(nameof(tags), "Tags and hosts can't both be null/empty.");
             }
 
-            var uri = new Uri(baseUri, $"{EntityNamePlural}/{identifier}/purge_cache");
+            var uri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(identifier)}/purge_cache");
             var payload = new PurgeFilesByTagsOrHostsPayload(tags ?? [], hosts ?? []);
             return await PostAsync<PurgeFilesByTagsOrHostsPayload, IdResult>(uri, payload, cancellationToken);
         }
@@ -238,7 +237,7 @@
                 throw new ArgumentNullException(nameof(identifier));
             }
 
-            return await DeleteAsync<IdResult>(new Uri(baseUri, $"{EntityNamePlural}/{identifier}"), cancellationToken);
+            return await DeleteAsync<IdResult>(new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(identifier)}"), cancellationToken);
         }
     }
 }

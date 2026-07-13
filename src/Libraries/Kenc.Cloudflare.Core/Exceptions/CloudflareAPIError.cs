@@ -1,6 +1,7 @@
 ﻿namespace Kenc.Cloudflare.Core.Exceptions
 {
     using System.Text.Json.Serialization;
+    using Kenc.Cloudflare.Core.JsonConverters;
 
     /// <summary>
     /// Wrapper for errors from the Cloudflare REST API.
@@ -9,6 +10,7 @@
     public class CloudflareApiError
     {
         [JsonPropertyName("code")]
+        [JsonConverter(typeof(FlexibleStringConverter))]
         public string Code { get; private set; }
 
         [JsonPropertyName("message")]

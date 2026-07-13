@@ -18,7 +18,7 @@
     {
         public static readonly string EntityNamePlural = "dns_records";
 
-        private readonly Uri baseUri;
+        private readonly Uri _baseUri;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ZoneClient"/> class.
@@ -26,7 +26,7 @@
         /// <param name="httpClient">Client to use to send requests.</param>
         public ZoneDNSSettingsClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
-            this.baseUri = baseUri;
+            _baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
         }
 
         /// <summary>
@@ -60,7 +60,7 @@
             }
 
             var payload = new CreateDNSRecord(name, type, content, ttl, priority, proxied);
-            return await PostAsync<CreateDNSRecord, DNSRecord>(new Uri(baseUri, $"zones/{zoneIdentifier}/{EntityNamePlural}"), payload, cancellationToken);
+            return await PostAsync<CreateDNSRecord, DNSRecord>(new Uri(_baseUri, $"zones/{Uri.EscapeDataString(zoneIdentifier)}/{EntityNamePlural}"), payload, cancellationToken);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@
                 throw new ArgumentNullException(nameof(name));
             }
 
-            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{EntityNamePlural}/{name}");
+            var uri = new Uri(_baseUri, $"{ZoneClient.EntityNamePlural}/{Uri.EscapeDataString(zoneIdentifier)}/{EntityNamePlural}/{Uri.EscapeDataString(name)}");
             return await GetAsync<DNSRecord>(uri, cancellationToken);
         }
 
@@ -112,12 +112,12 @@
 
             if (!string.IsNullOrEmpty(name))
             {
-                parameters.Add($"{nameof(name)}={name}");
+                parameters.Add($"{nameof(name)}={Uri.EscapeDataString(name)}");
             }
 
             if (!string.IsNullOrEmpty(content))
             {
-                parameters.Add($"{nameof(content)}={content}");
+                parameters.Add($"{nameof(content)}={Uri.EscapeDataString(content)}");
             }
 
             if (page.HasValue)
@@ -132,7 +132,7 @@
 
             if (!string.IsNullOrEmpty(order))
             {
-                parameters.Add($"{nameof(order)}={order}");
+                parameters.Add($"{nameof(order)}={Uri.EscapeDataString(order)}");
             }
 
             if (direction.HasValue)
@@ -151,7 +151,7 @@
                 queryString = "?" + string.Join('&', parameters);
             }
 
-            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{zoneIdentifier}/{EntityNamePlural}{queryString}");
+            var uri = new Uri(_baseUri, $"{ZoneClient.EntityNamePlural}/{Uri.EscapeDataString(zoneIdentifier)}/{EntityNamePlural}{queryString}");
             return await GetAsync<EntityList<DNSRecord>>(uri, cancellationToken);
         }
 
@@ -186,7 +186,7 @@
             }
 
             var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
-            var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");
+            var uri = new Uri(_baseUri, $"zones/{Uri.EscapeDataString(zoneIdentififer)}/{EntityNamePlural}/{Uri.EscapeDataString(recordId)}");
             return await PutAsync<UpdateDNSRecord, DNSRecord>(uri, payload, cancellationToken);
         }
 
@@ -223,7 +223,7 @@
             _ = string.IsNullOrEmpty(zoneIdentififer) ? throw new ArgumentNullException(nameof(zoneIdentififer)) : zoneIdentififer;
 
             var payload = new UpdateDNSRecord(name, type, content, ttl, proxied);
-            var uri = new Uri(baseUri, $"zones/{zoneIdentififer}/{EntityNamePlural}/{recordId}");
+            var uri = new Uri(_baseUri, $"zones/{Uri.EscapeDataString(zoneIdentififer)}/{EntityNamePlural}/{Uri.EscapeDataString(recordId)}");
             return await PatchAsync<UpdateDNSRecord, DNSRecord>(uri, payload, cancellationToken);
         }
 
@@ -236,7 +236,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown when an error is returned from the Cloudflare API.</exception>
         public async Task<IdResult> DeleteRecordAsync(DNSRecord record, CancellationToken cancellationToken = default)
         {
-            var uri = new Uri(baseUri, $"{ZoneClient.EntityNamePlural}/{record.ZoneId}/{EntityNamePlural}/{record.Id}");
+            var uri = new Uri(_baseUri, $"{ZoneClient.EntityNamePlural}/{Uri.EscapeDataString(record.ZoneId)}/{EntityNamePlural}/{Uri.EscapeDataString(record.Id)}");
             return await DeleteAsync<IdResult>(uri, cancellationToken);
         }
     }

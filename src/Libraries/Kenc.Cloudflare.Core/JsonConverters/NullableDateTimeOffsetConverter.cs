@@ -1,6 +1,7 @@
 ﻿namespace Kenc.Cloudflare.Core.JsonConverters
 {
     using System;
+    using System.Globalization;
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
@@ -11,6 +12,11 @@
     {
         public override DateTimeOffset? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType == JsonTokenType.Null)
+            {
+                return null;
+            }
+
             return reader.GetDateTimeOffset().ToUniversalTime();
         }
 
@@ -18,7 +24,7 @@
         {
             if (value.HasValue)
             {
-                writer.WriteStringValue(value.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"));
+                writer.WriteStringValue(value.Value.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
             }
         }
     }

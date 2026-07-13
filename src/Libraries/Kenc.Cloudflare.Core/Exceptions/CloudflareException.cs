@@ -26,7 +26,7 @@
         public override string ToString()
         {
             var stringBuilder = new StringBuilder();
-            foreach (CloudflareApiError error in Errors)
+            foreach (var error in Errors)
             {
                 stringBuilder.AppendLine($"{error.Code}: {error.Message}");
             }

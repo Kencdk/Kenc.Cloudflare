@@ -15,8 +15,8 @@
     {
         public static readonly string EntityNameSingular = "user";
 
-        private readonly Uri baseUri;
-        private readonly UserTokensClient userTokensClient;
+        private readonly Uri _baseUri;
+        private readonly UserTokensClient _userTokensClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserClient"/> class.
@@ -24,21 +24,21 @@
         /// <param name="httpClient">Client to use to send requests.</param>
         public UserClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
-            this.baseUri = baseUri;
-            userTokensClient = new UserTokensClient(httpClient, new Uri(baseUri, $"{EntityNameSingular}/"));
+            _baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
+            _userTokensClient = new UserTokensClient(httpClient, new Uri(baseUri, $"{EntityNameSingular}/"));
         }
 
-        public UserTokensClient UserTokenClient => userTokensClient;
+        public UserTokensClient UserTokenClient => _userTokensClient;
 
         public async Task<User> GetUserAsync(CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, EntityNameSingular);
+            var targetUri = new Uri(_baseUri, EntityNameSingular);
             return await GetAsync<User>(targetUri, cancellationToken);
         }
 
         public async Task<User> PatchUserAsync(string? firstName = null, string? lastName = null, string? telephone = null, string? country = null, string? zipcode = null, CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, EntityNameSingular);
+            var targetUri = new Uri(_baseUri, EntityNameSingular);
             var payload = new UpdateUserPayload
             {
                 FirstName = firstName,

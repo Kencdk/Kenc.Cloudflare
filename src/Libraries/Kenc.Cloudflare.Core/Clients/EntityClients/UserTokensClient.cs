@@ -1,4 +1,8 @@
-﻿namespace Kenc.Cloudflare.Core.Clients.EntityClients
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace Kenc.Cloudflare.Core.Clients.EntityClients
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +21,7 @@
     {
         public static readonly string EntityNamePlural = "tokens";
 
-        private readonly Uri baseUri;
+        private readonly Uri _baseUri;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserClient"/> class.
@@ -25,7 +29,7 @@
         /// <param name="restClient">Client to use to send requests.</param>
         public UserTokensClient(HttpClient httpClient, Uri baseUri) : base(httpClient)
         {
-            this.baseUri = baseUri;
+            _baseUri = baseUri ?? throw new ArgumentNullException(nameof(baseUri));
         }
 
         /// <summary>
@@ -41,7 +45,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
         public async Task<UserToken> CreateTokenAsync(string name, Policy[] policies, DateTimeOffset? notBefore, DateTimeOffset? expiresOn, UserTokenCondition? conditions = null, CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, $"{EntityNamePlural}");
+            var targetUri = new Uri(_baseUri, $"{EntityNamePlural}");
 
             var userToken = new UserToken
             {
@@ -63,7 +67,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
         public async Task<IdResult> DeleteTokenAsync(string id, CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, $"{EntityNamePlural}/{id}");
+            var targetUri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(id)}");
             return await DeleteAsync<IdResult>(targetUri, cancellationToken);
         }
 
@@ -76,7 +80,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
         public async Task<UserToken> GetUserToken(string id, CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, $"{EntityNamePlural}/{id}");
+            var targetUri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(id)}");
             return await GetAsync<UserToken>(targetUri, cancellationToken);
         }
 
@@ -91,7 +95,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
         public async Task<IReadOnlyList<UserToken>> ListTokensAsync(int page = 1, int perPage = 20, Direction direction = Direction.Asc, CancellationToken cancellationToken = default)
         {
-            var uri = new Uri(baseUri, $"{EntityNamePlural}?page={page}&per_page={perPage}&direction={direction.ConvertToString()}");
+            var uri = new Uri(_baseUri, $"{EntityNamePlural}?page={page}&per_page={perPage}&direction={direction.ConvertToString()}");
             return await GetAsync<EntityList<UserToken>>(uri, cancellationToken);
         }
 
@@ -104,7 +108,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
         public async Task<string> RollTokenAsync(string id, CancellationToken cancellationToken = default)
         {
-            var uri = new Uri(baseUri, $"{EntityNamePlural}/{id}/value");
+            var uri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(id)}/value");
             return await PutAsync<string>(uri, cancellationToken);
         }
 
@@ -116,7 +120,7 @@
         /// <exception cref="Exceptions.CloudflareException">Thrown for errors returned from the API.</exception>
         public async Task<TestUserTokenResult> VerifyTokenAsync(string token, CancellationToken cancellationToken = default)
         {
-            var targetUri = new Uri(baseUri, $"{EntityNamePlural}/verify");
+            var targetUri = new Uri(_baseUri, $"{EntityNamePlural}/verify");
             var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, targetUri);
             httpRequestMessage.Headers.TryAddWithoutValidation("Authorization", $"Bearer {token}");
             return await SendMessage<TestUserTokenResult>(httpRequestMessage, cancellationToken);
@@ -147,7 +151,7 @@
                 Policies = policies,
             };
 
-            var targetUri = new Uri(baseUri, $"{EntityNamePlural}/{id}");
+            var targetUri = new Uri(_baseUri, $"{EntityNamePlural}/{Uri.EscapeDataString(id)}");
             return await PutAsync<UpdateUserTokenPayload, UserToken>(targetUri, payload, cancellationToken);
         }
     }
